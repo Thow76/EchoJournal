@@ -12,18 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.echojournal.ui.theme.EchoJournalTheme
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.echojournal.ui.screens.historyscreen.JournalHistoryScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
         enableEdgeToEdge()
         setContent {
             EchoJournalTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    EchoJournalApp(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -31,10 +31,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun EchoJournalApp(modifier: Modifier) {
+    NavigationRoot()
 }
 
