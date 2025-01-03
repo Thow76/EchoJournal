@@ -19,9 +19,10 @@ import androidx.compose.runtime.Composable
             onPrimary = MaterialColors.OnPrimary100,
             primaryContainer = MaterialColors.PrimaryContainer50,
             secondary = Palettes.Secondary30,
-            onSecondary = MaterialColors.InversePrimarySecondary80,
+            onSecondary = Palettes.Secondary90,
             background = MaterialColors.BackgroundNeutralVariant99,
             surface = MaterialColors.SurfacePrimary100,
+            surfaceVariant = MaterialColors.InverseOnSurfaceSecondary95,
             onSurface = MaterialColors.OnSurfaceNeutralVariant10,
             error = ErrorColors.Error95,
             onError = MaterialColors.OnError100

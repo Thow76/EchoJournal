@@ -4,7 +4,7 @@ data class JournalEntry(
     val id: Int,
     val title: String,
     val date: String, // Example: "Today", "Yesterday", or "Saturday, Dec 28"
-    val mood: Mood,
+    val mood: String,
     val description: String
 )
 
