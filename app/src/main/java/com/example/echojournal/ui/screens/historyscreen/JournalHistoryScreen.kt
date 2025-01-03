@@ -22,6 +22,7 @@ import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
+import com.example.echojournal.ui.components.FilterSection
 import com.example.echojournal.ui.components.LoadingIndicator
 import com.example.echojournal.ui.theme.Gradients
 
@@ -33,7 +34,8 @@ fun JournalHistoryScreen(
     viewModel: JournalHistoryViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val actionIconContentColor = MaterialTheme.colorScheme.onSurface
+    val selectedMoods by viewModel.selectedMoods.collectAsState()
+    val selectedTopics by viewModel.selectedTopics.collectAsState()
 
     // Trigger loading of journal entries
     LaunchedEffect(Unit) {
@@ -50,26 +52,46 @@ fun JournalHistoryScreen(
                 CustomAppBar(title = stringResource(id = R.string.history_screen_heading))
             }
         ) { paddingValues ->
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                when {
-                    uiState.isLoading -> {
-                        LoadingIndicator()
-                    }
-                    uiState.errorMessage != null -> {
-                        ErrorSnackbar(
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            errorMessage = "Error: ${uiState.errorMessage}",
-                            onDismiss = viewModel::clearErrorMessage)
-                    }
-                    uiState.journalEntries.isNotEmpty() -> {
-                       JournalHistoryScreenList(journalEntries = uiState.journalEntries)
-                    }
-                    else -> {
-                        JournalHistoryScreenEmpty(paddingValues)
+                FilterSection(
+                    selectedMoods = selectedMoods,
+                    selectedTopics = selectedTopics,
+                    onMoodSelected = { viewModel.addMoodFilter(it) },
+                    onMoodDeselected = { viewModel.removeMoodFilter(it) },
+                    onTopicSelected = { viewModel.addTopicFilter(it) },
+                    onTopicDeselected = { viewModel.removeTopicFilter(it) },
+                    onClearMoodSelection = { viewModel.clearAllMoodFilters()},
+                    onClearTopicSelection = { viewModel.clearAllTopicFilters()}
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
+                ) {
+                    when {
+                        uiState.isLoading -> {
+                            LoadingIndicator()
+                        }
+
+                        uiState.errorMessage != null -> {
+                            ErrorSnackbar(
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                                errorMessage = "Error: ${uiState.errorMessage}",
+                                onDismiss = viewModel::clearErrorMessage
+                            )
+                        }
+
+                        uiState.journalEntries.isNotEmpty() -> {
+                            JournalHistoryScreenList(journalEntries = uiState.journalEntries)
+                        }
+
+                        else -> {
+                            JournalHistoryScreenEmpty(paddingValues)
+                        }
                     }
                 }
             }
