@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 // =============================
@@ -101,17 +102,39 @@ object Gradients {
     val BgStart = Color(0x66D9E2FF) // Secondary 90 with 40% opacity
     val BgEnd = Color(0x66EEF0FF)   // Secondary 95 with 40% opacity
 
+    val BgGradient = Brush.linearGradient(
+        colors = listOf(BgStart, BgEnd),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset.Infinite)
+
     // BG-saturated Gradient - Secondary 90 to Secondary 95
     val BgSaturatedStart = Palettes.Secondary90
     val BgSaturatedEnd = Palettes.Secondary95
+
+    val BgSaturateGradient = Brush.linearGradient(
+        colors = listOf(BgSaturatedStart, BgSaturatedEnd),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset.Infinite)
 
     // Button Gradient - Primary 60 to Primary 50
     val ButtonStart = Palettes.Primary60
     val ButtonEnd = Palettes.Primary50
 
+    val ButtonGradient = Brush.linearGradient(
+        colors = listOf(ButtonStart, ButtonEnd),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset.Infinite)
+
     // Button-Pressed Gradient - Primary 60 to Primary 40
     val ButtonPressedStart = Palettes.Primary60
     val ButtonPressedEnd = Palettes.Primary40
+
+    val ButtonPressedGradient = Brush.linearGradient(
+        colors = listOf(ButtonPressedStart, ButtonPressedEnd),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset.Infinite)
+
+
 }
 
 // =============================
