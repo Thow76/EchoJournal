@@ -30,6 +30,7 @@ import com.example.echojournal.ui.components.ErrorSnackbar
 import com.example.echojournal.ui.components.FilterSection
 import com.example.echojournal.ui.components.LoadingIndicator
 import com.example.echojournal.ui.theme.Gradients
+import com.example.echojournal.ui.theme.MoodColors
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -107,6 +108,14 @@ fun JournalHistoryScreen(
 
 @Composable
 fun AudioLogEntry(entry: JournalEntry) {
+    val entryColour = when (entry.mood) {
+        "Neutral" -> MoodColors.Neutral35
+        "Stressed" -> MoodColors.Stressed35
+        "Sad" -> MoodColors.Sad35
+        "Peaceful" -> MoodColors.Peaceful35
+        "Excited" -> MoodColors.Excited35
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -119,8 +128,7 @@ fun AudioLogEntry(entry: JournalEntry) {
                 contentDescription = null,
                 tint = Color.Unspecified,)
             Spacer(modifier = Modifier.width(8.dp))
-            Row(
-                modifier = Modifier.background(if (entry.mood == "Neutral") MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface).fillMaxWidth()) {
+            Row(modifier = Modifier.background(entryColour).fillMaxWidth()) {
                 Column {
                     Text(
                         text = entry.date,
