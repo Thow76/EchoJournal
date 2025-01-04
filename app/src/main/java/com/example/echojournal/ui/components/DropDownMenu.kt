@@ -52,39 +52,49 @@ fun MultiSelectDropdownMenu(
     val selectedText = categorySort.ifEmpty { "All $label" }
 
 
-        Box(
-        modifier = Modifier
-            .padding(8.dp)
-    ) {
+        Box(modifier = Modifier.padding(end = 8.dp)) {
         // Button that triggers the dropdown
         Button(
             onClick = { expanded = !expanded },
-            modifier = Modifier,
+            modifier = Modifier.padding(all = 4.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent
             ),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
         ) {
-            Row {
-                Text(
-                    text = selectedText,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                    )
-                // Cancellation cross icon
-                if (categorySort.isNotEmpty()) {
-                    IconButton(
-                        onClick = {
-                            onClearSelection() // Clear all selections
-                        },
-                        modifier = Modifier.size(18.dp) // Consistent icon size
-                    ) {
+            Row() {
+                if (label == "Moods"){
+            selectedOptions.forEach { option ->
+                    getIconForOption(option)?.let { icon ->
                         Icon(
-                            imageVector = Icons.Default.Close, // Use a close or cancel icon
-                            contentDescription = "Clear Selection",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            imageVector = icon,
+                            contentDescription = "",
+                            modifier = Modifier.padding(end = 4.dp),
+                            tint = Color.Unspecified // Retain the original vector color
                         )
+                    }
+                }}
+                Row {
+                    Text(
+                        text = selectedText,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+
+                        )
+                    // Cancellation cross icon
+                    if (categorySort.isNotEmpty()) {
+                        IconButton(
+                            onClick = {
+                                onClearSelection() // Clear all selections
+                            },
+                            modifier = Modifier.size(18.dp) // Consistent icon size
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close, // Use a close or cancel icon
+                                contentDescription = "Clear Selection",
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
@@ -116,9 +126,9 @@ fun MultiSelectDropdownMenu(
                                 .padding(8.dp)
                         ) {
                             // Add icon if available
-                            getIconForOption(option)?.let {
+                            getIconForOption(option).let {
                                 Icon(
-                                    imageVector = it,
+                                    imageVector = it!!,
                                     contentDescription = "$option Icon",
                                     modifier = Modifier.padding(end = 8.dp),
                                     tint = Color.Unspecified
@@ -142,7 +152,7 @@ fun MultiSelectDropdownMenu(
             }}}}
 
 @Composable
-fun getIconForOption(option: String): ImageVector {
+fun getIconForOption(option: String): ImageVector? {
     return when (option) {
         "Stressed" -> ImageVector.vectorResource(R.drawable.stressed_mood)
         "Sad" -> ImageVector.vectorResource(R.drawable.sad_mood)
