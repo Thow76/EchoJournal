@@ -2,8 +2,8 @@ package com.example.echojournal.ui.screens.historyscreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.echojournal.R
 import com.example.echojournal.data.JournalEntry
-import com.example.echojournal.data.Mood
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,17 +38,59 @@ class JournalHistoryViewModel : ViewModel() {
             }
         }
     }
-
     private fun getDummyJournalEntries(): List<JournalEntry> {
         return listOf(
-            JournalEntry(1, "Family", "Today", "Peaceful", "A reflective morning."),
-            JournalEntry(2, "Friends", "Yesterday", "Neutral", "Casual thoughts on the day."),
-            JournalEntry(3, "Love", "Saturday, Dec 28", "Sad", "An emotional evening recap."),
-            JournalEntry(4, "Surprise", "Last Weekend", "Excited", "Explored a new hiking trail."),
-            JournalEntry(5, "Work", "Last Monday", "Stressed", "Busy day at work."),
-            JournalEntry(6, "Work", "Last Friday", "Peaceful", "Watched a movie and relaxed.")
+            JournalEntry(
+                id = 1,
+                title = "Family",
+                date = "Today",
+                mood = "Peaceful",
+                description = "A reflective morning.",
+                iconResId = R.drawable.peaceful_mood
+            ),
+            JournalEntry(
+                id = 2,
+                title = "Friends",
+                date = "Yesterday",
+                mood = "Neutral",
+                description = "Casual thoughts on the day.",
+                iconResId = R.drawable.neutral_mood
+            ),
+            JournalEntry(
+                id = 3,
+                title = "Love",
+                date = "Saturday",
+                mood = "Sad",
+                description = "An emotional evening recap.",
+                iconResId = R.drawable.sad_mood
+            ),
+            JournalEntry(
+                id = 4,
+                title = "Surprise",
+                date = "Last Weekend",
+                mood = "Excited",
+                description = "Explored a new hiking trail.",
+                iconResId = R.drawable.excited_mood
+            ),
+            JournalEntry(
+                id = 5,
+                title = "Work",
+                date = "Last Monday",
+                mood = "Stressed",
+                description = "Busy day at work.",
+                iconResId = R.drawable.stressed_mood
+            ),
+            JournalEntry(
+                id = 6,
+                title = "Work",
+                date = "Last Friday",
+                mood = "Peaceful",
+                description = "Watched a movie and relaxed.",
+                iconResId = R.drawable.peaceful_mood
+            )
         )
     }
+
 
     fun addMoodFilter(mood: String) {
         _selectedMoods.value = _selectedMoods.value + mood

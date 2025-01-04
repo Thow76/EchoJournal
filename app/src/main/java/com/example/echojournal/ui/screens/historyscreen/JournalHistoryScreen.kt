@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.historyscreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -8,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,7 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
@@ -108,14 +113,30 @@ fun AudioLogEntry(entry: JournalEntry) {
             .padding(8.dp),// Handle navigation on click
         contentAlignment = Alignment.CenterStart
     ) {
-        Column {
-            Text(text = entry.title, fontWeight = FontWeight.Bold)
-            Text(text = entry.date, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(
-                text = entry.description,
-                maxLines = 3,
-                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-            )
+        Row {
+            Icon(
+                painter = painterResource(id = entry.iconResId!!),
+                contentDescription = null,
+                tint = Color.Unspecified,)
+            Spacer(modifier = Modifier.width(8.dp))
+            Row(
+                modifier = Modifier.background(if (entry.mood == "Neutral") MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface).fillMaxWidth()) {
+                Column {
+                    Text(
+                        text = entry.date,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(text = entry.title, fontWeight = FontWeight.Bold)
+
+                    Text(
+                        text = entry.description,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
         }
     }
 }

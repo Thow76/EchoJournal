@@ -142,7 +142,7 @@ fun MultiSelectDropdownMenu(
             }}}}
 
 @Composable
-fun getIconForOption(option: String): ImageVector? {
+fun getIconForOption(option: String): ImageVector {
     return when (option) {
         "Stressed" -> ImageVector.vectorResource(R.drawable.stressed_mood)
         "Sad" -> ImageVector.vectorResource(R.drawable.sad_mood)
