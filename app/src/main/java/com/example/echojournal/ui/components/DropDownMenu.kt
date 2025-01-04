@@ -25,8 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.theme.Palettes
 
 
@@ -110,6 +115,15 @@ fun MultiSelectDropdownMenu(
                                 .background(if (isSelected) Palettes.Secondary95 else Color.Transparent)
                                 .padding(8.dp)
                         ) {
+                            // Add icon if available
+                            getIconForOption(option)?.let {
+                                Icon(
+                                    imageVector = it,
+                                    contentDescription = "$option Icon",
+                                    modifier = Modifier.padding(end = 8.dp),
+                                    tint = Color.Unspecified
+                                )
+                            }
                             Text(
                                 text = option,
                                 color = MaterialTheme.colorScheme.onSurface,
@@ -127,6 +141,17 @@ fun MultiSelectDropdownMenu(
                 )
             }}}}
 
+@Composable
+fun getIconForOption(option: String): ImageVector? {
+    return when (option) {
+        "Stressed" -> ImageVector.vectorResource(R.drawable.stressed_mood)
+        "Sad" -> ImageVector.vectorResource(R.drawable.sad_mood)
+        "Neutral" -> ImageVector.vectorResource(R.drawable.neutral_mood)
+        "Peaceful" -> ImageVector.vectorResource(R.drawable.peaceful_mood)
+        "Excited" -> ImageVector.vectorResource(R.drawable.excited_mood)
+        else -> ImageVector.vectorResource(R.drawable.hash_icon)
+    }
+}
 
 
 
