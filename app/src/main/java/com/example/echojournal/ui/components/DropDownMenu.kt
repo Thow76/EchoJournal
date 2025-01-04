@@ -41,9 +41,13 @@ fun MultiSelectDropdownMenu(
     dropdownWidth: Dp = 380.dp // Default width for the dropdown
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedText = if (selectedOptions.isEmpty()) "All $label" else selectedOptions.joinToString(", ")
+    val selectedOptionsSorted = selectedOptions.sorted()
+    val selectedCategory = if(label == "Moods") selectedOptions else selectedOptionsSorted
+    val categorySort = if(selectedCategory == selectedOptions) selectedCategory.joinToString(limit = 2, truncated = "") else selectedCategory.joinToString(limit = 2, truncated = " +${selectedOptions.size - 2}")
+    val selectedText = categorySort.ifEmpty { "All $label" }
 
-    Box(
+
+        Box(
         modifier = Modifier
             .padding(8.dp)
     ) {
@@ -64,12 +68,12 @@ fun MultiSelectDropdownMenu(
 
                     )
                 // Cancellation cross icon
-                if (selectedOptions.isNotEmpty()) {
+                if (categorySort.isNotEmpty()) {
                     IconButton(
                         onClick = {
                             onClearSelection() // Clear all selections
                         },
-                        modifier = Modifier.size(20.dp) // Consistent icon size
+                        modifier = Modifier.size(18.dp) // Consistent icon size
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close, // Use a close or cancel icon
@@ -89,7 +93,7 @@ fun MultiSelectDropdownMenu(
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             options.forEach { option ->
-                val isSelected = option in selectedOptions
+                val isSelected = option in selectedCategory
                 androidx.compose.material3.DropdownMenuItem(
                     onClick = {
                         if (isSelected) {
@@ -122,6 +126,7 @@ fun MultiSelectDropdownMenu(
                     }
                 )
             }}}}
+
 
 
 
