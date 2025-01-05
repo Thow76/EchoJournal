@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +65,8 @@ fun MultiSelectDropdownMenu(
     dropdownWidth: Dp = 380.dp // Default width for the dropdown
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var toggleAfterReset by remember { mutableStateOf(false) } // Tracks if dropdown should reopen after a reset
+
     val selectedOptionsSorted = selectedOptions.sorted()
     val selectedCategory = if (label == "Moods") selectedOptions else selectedOptionsSorted
     val categorySort = if (selectedCategory == selectedOptions) {
@@ -71,7 +74,21 @@ fun MultiSelectDropdownMenu(
     } else {
         selectedCategory.joinToString(limit = 2, truncated = " +${selectedOptions.size - 2}")
     }
-    val selectedText = categorySort.ifEmpty { "All $label" }
+
+    // Update selectedText to "All $label" if all options are selected
+    val selectedText = if (selectedOptions.size == options.size) {
+        "All $label"
+    } else {
+        categorySort.ifEmpty { "All $label" }
+    }
+
+    // Handle reopening dropdown after a reset
+    LaunchedEffect(toggleAfterReset) {
+        if (toggleAfterReset) {
+            expanded = true
+            toggleAfterReset = false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -80,10 +97,18 @@ fun MultiSelectDropdownMenu(
         // Dynamic Chip replaces the button
         FilterChip(
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Color.White,
-                ),
+                selectedContainerColor = Color.White
+            ),
             selected = expanded,
-            onClick = { expanded = !expanded }, // Toggle dropdown
+            onClick = {
+                if (selectedOptions.size == options.size) {
+                    onClearSelection() // Deselect all options if all are selected
+                    expanded = false // Close dropdown
+                    toggleAfterReset = true // Schedule reopening of dropdown
+                } else {
+                    expanded = !expanded // Toggle dropdown normally
+                }
+            },
             label = {
                 Text(
                     text = selectedText,
@@ -94,32 +119,40 @@ fun MultiSelectDropdownMenu(
             shape = RoundedCornerShape(50),
             border = BorderStroke(
                 width = 1.dp,
-                color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+                color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+            ),
             leadingIcon = {
-                if (label == "Moods" && selectedOptions.isNotEmpty()) {
-                    Row(){
-                    selectedOptions.forEach { option ->
-                                getIconForOption(option)?.let { icon ->
-                                    Icon(
-                                        imageVector = icon,
-                                        tint = Color.Unspecified,
-                                        contentDescription = null
-                                    )
-                                }
+                // Only show mood icons if not all options are selected
+                if (label == "Moods" && selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        selectedOptions.take(2).forEach { option ->
+                            getIconForOption(option)?.let { icon ->
+                                Icon(
+                                    imageVector = icon,
+                                    tint = Color.Unspecified,
+                                    contentDescription = null
+                                )
                             }
-                    }}
-                },
+                        }
+                    }
+                }
+            },
             trailingIcon = {
-                if (selectedOptions.isNotEmpty()) {
+                // Only show the close icon if not all options are selected
+                if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
                     IconButton(
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier.size(16.dp),
                         onClick = { onClearSelection() }
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Clear Selection")}
-                        }
+                        Icon(Icons.Default.Close, contentDescription = "Clear Selection")
+                    }
+                }
             },
             modifier = Modifier
-                .widthIn(min = 100.dp, max = 300.dp)
+                .widthIn(min = 100.dp, max = 250.dp)
         )
 
         // Dropdown menu
@@ -138,6 +171,10 @@ fun MultiSelectDropdownMenu(
                             onOptionDeselected(option) // Deselect option
                         } else {
                             onOptionSelected(option) // Select option
+                        }
+                        // Close dropdown if all options are selected
+                        if (selectedOptions.size + 1 == options.size) {
+                            expanded = false
                         }
                     },
                     text = {
@@ -187,8 +224,6 @@ fun getIconForOption(option: String): ImageVector? {
         else -> ImageVector.vectorResource(R.drawable.hash_icon)
     }
 }
-
-
 
 
 
