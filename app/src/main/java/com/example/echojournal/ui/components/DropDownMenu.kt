@@ -2,20 +2,36 @@ package com.example.echojournal.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,9 +45,11 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.R
+import com.example.echojournal.ui.theme.EchoJournalTheme
 import com.example.echojournal.ui.theme.Palettes
 
 
@@ -47,60 +65,65 @@ fun MultiSelectDropdownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val selectedOptionsSorted = selectedOptions.sorted()
-    val selectedCategory = if(label == "Moods") selectedOptions else selectedOptionsSorted
-    val categorySort = if(selectedCategory == selectedOptions) selectedCategory.joinToString(limit = 2, truncated = "") else selectedCategory.joinToString(limit = 2, truncated = " +${selectedOptions.size - 2}")
+    val selectedCategory = if (label == "Moods") selectedOptions else selectedOptionsSorted
+    val categorySort = if (selectedCategory == selectedOptions) {
+        selectedCategory.joinToString(limit = 2, truncated = "")
+    } else {
+        selectedCategory.joinToString(limit = 2, truncated = " +${selectedOptions.size - 2}")
+    }
     val selectedText = categorySort.ifEmpty { "All $label" }
 
-
-        Box(modifier = Modifier.padding(end = 8.dp)) {
-        // Button that triggers the dropdown
-        Button(
-            onClick = { expanded = !expanded },
-            modifier = Modifier.padding(all = 4.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent
-            ),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-        ) {
-            Row() {
-                if (label == "Moods"){
-            selectedOptions.forEach { option ->
-                    getIconForOption(option)?.let { icon ->
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = "",
-                            modifier = Modifier.padding(end = 4.dp),
-                            tint = Color.Unspecified // Retain the original vector color
-                        )
-                    }
-                }}
-                Row {
-                    Text(
-                        text = selectedText,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-
-                        )
-                    // Cancellation cross icon
-                    if (categorySort.isNotEmpty()) {
-                        IconButton(
-                            onClick = {
-                                onClearSelection() // Clear all selections
-                            },
-                            modifier = Modifier.size(18.dp) // Consistent icon size
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Close, // Use a close or cancel icon
-                                contentDescription = "Clear Selection",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+    Box(
+        modifier = Modifier
+            .padding(2.dp)
+    ) {
+        // Dynamic Chip replaces the button
+        FilterChip(
+            colors = FilterChipDefaults.filterChipColors(
+                selectedContainerColor = Color.White,
+                ),
+            selected = expanded,
+            onClick = { expanded = !expanded }, // Toggle dropdown
+            label = {
+                Text(
+                    text = selectedText,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            shape = RoundedCornerShape(50),
+            border = BorderStroke(
+                width = 1.dp,
+                color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
+            leadingIcon = {
+                if (label == "Moods" && selectedOptions.isNotEmpty()) {
+                    Row(){
+                    selectedOptions.forEach { option ->
+                                getIconForOption(option)?.let { icon ->
+                                    Icon(
+                                        imageVector = icon,
+                                        tint = Color.Unspecified,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                    }}
+                },
+            trailingIcon = {
+                if (selectedOptions.isNotEmpty()) {
+                    IconButton(
+                        modifier = Modifier.size(18.dp),
+                        onClick = { onClearSelection() }
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Clear Selection")}
                         }
-                    }
-                }
-            }
-        }
+            },
+            modifier = Modifier
+                .widthIn(min = 100.dp, max = 300.dp)
+        )
+
         // Dropdown menu
-        androidx.compose.material3.DropdownMenu(
+        DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
@@ -109,7 +132,7 @@ fun MultiSelectDropdownMenu(
         ) {
             options.forEach { option ->
                 val isSelected = option in selectedCategory
-                androidx.compose.material3.DropdownMenuItem(
+                DropdownMenuItem(
                     onClick = {
                         if (isSelected) {
                             onOptionDeselected(option) // Deselect option
@@ -125,13 +148,12 @@ fun MultiSelectDropdownMenu(
                                 .background(if (isSelected) Palettes.Secondary95 else Color.Transparent)
                                 .padding(8.dp)
                         ) {
-                            // Add icon if available
-                            getIconForOption(option).let {
+                            // Add icon with Color.Unspecified tint to preserve original color
+                            getIconForOption(option)?.let { icon ->
                                 Icon(
-                                    imageVector = it!!,
-                                    contentDescription = "$option Icon",
-                                    modifier = Modifier.padding(end = 8.dp),
-                                    tint = Color.Unspecified
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = Color.Unspecified // Retain original vector color
                                 )
                             }
                             Text(
@@ -149,7 +171,10 @@ fun MultiSelectDropdownMenu(
                         }
                     }
                 )
-            }}}}
+            }
+        }
+    }
+}
 
 @Composable
 fun getIconForOption(option: String): ImageVector? {
@@ -162,6 +187,13 @@ fun getIconForOption(option: String): ImageVector? {
         else -> ImageVector.vectorResource(R.drawable.hash_icon)
     }
 }
+
+
+
+
+
+
+
 
 
 
