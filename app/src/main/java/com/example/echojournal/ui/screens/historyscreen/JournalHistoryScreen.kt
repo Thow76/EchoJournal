@@ -1,6 +1,5 @@
 package com.example.echojournal.ui.screens.historyscreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,7 +25,6 @@ import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
-import com.example.echojournal.ui.components.FilterSection
 import com.example.echojournal.ui.components.LoadingIndicator
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.MoodColors

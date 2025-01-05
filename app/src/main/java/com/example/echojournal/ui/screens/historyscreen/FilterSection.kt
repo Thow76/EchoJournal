@@ -1,16 +1,14 @@
-package com.example.echojournal.ui.components
+package com.example.echojournal.ui.screens.historyscreen
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.echojournal.R
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.MultiSelectDropdownMenu
 
 
 @Composable
