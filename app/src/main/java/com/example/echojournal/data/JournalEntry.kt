@@ -7,6 +7,7 @@ data class JournalEntry(
     val iconResId: Int? = null,
     val title: String,
     val date: String, // Example: "Today", "Yesterday", or "Saturday, Dec 28"
+    val timeStamp: String,
     val mood: String,
     val description: String
 )

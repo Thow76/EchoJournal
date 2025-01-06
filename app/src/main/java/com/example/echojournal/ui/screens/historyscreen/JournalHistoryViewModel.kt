@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.historyscreen
 
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.R
@@ -19,6 +20,8 @@ class JournalHistoryViewModel : ViewModel() {
 
     val selectedMoods: StateFlow<Set<String>> = _selectedMoods
     val selectedTopics: StateFlow<Set<String>> = _selectedTopics
+
+    private val expandedStates = mutableStateMapOf<Int, Boolean>()
 
     fun loadJournalEntries() {
         viewModelScope.launch {
@@ -47,52 +50,75 @@ class JournalHistoryViewModel : ViewModel() {
             JournalEntry(
                 id = 1,
                 title = "Family",
-                date = "Today",
+                date = "Today", // Remains "Today"
                 mood = "Peaceful",
                 description = "A reflective morning.",
-                iconResId = R.drawable.peaceful_mood
+                iconResId = R.drawable.peaceful_mood,
+                timeStamp = "09:00 AM"
             ),
             JournalEntry(
                 id = 2,
                 title = "Friends",
-                date = "Yesterday",
+                date = "Yesterday", // Remains "Yesterday"
                 mood = "Neutral",
-                description = "Casual thoughts on the day.",
-                iconResId = R.drawable.neutral_mood
+                description = """
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Suspendisse eu erat quis libero lacinia imperdiet.
+                Maecenas vehicula nisl sit amet feugiat porta.
+                Integer mollis enim quis imperdiet consequat.
+            """.trimIndent(),
+                iconResId = R.drawable.neutral_mood,
+                timeStamp = "07:15 PM"
             ),
             JournalEntry(
                 id = 3,
                 title = "Love",
-                date = "Saturday",
+                // Previously "Saturday" -> Now in the style: "Saturday, Dec 28"
+                date = "Saturday, Dec 28",
                 mood = "Sad",
                 description = "An emotional evening recap.",
-                iconResId = R.drawable.sad_mood
+                iconResId = R.drawable.sad_mood,
+                timeStamp = "10:30 PM"
             ),
             JournalEntry(
                 id = 4,
                 title = "Surprise",
-                date = "Last Weekend",
+                // Previously "Last Weekend" -> Example: "Sunday, Dec 29"
+                date = "Sunday, Dec 29",
                 mood = "Excited",
                 description = "Explored a new hiking trail.",
-                iconResId = R.drawable.excited_mood
+                iconResId = R.drawable.excited_mood,
+                timeStamp = "02:00 PM"
             ),
             JournalEntry(
                 id = 5,
                 title = "Work",
-                date = "Last Monday",
+                // Previously "Last Monday" -> Example: "Monday, Dec 30"
+                date = "Monday, Dec 30",
                 mood = "Stressed",
                 description = "Busy day at work.",
-                iconResId = R.drawable.stressed_mood
+                iconResId = R.drawable.stressed_mood,
+                timeStamp = "11:45 AM"
             ),
             JournalEntry(
                 id = 6,
                 title = "Work",
-                date = "Last Friday",
+                // Previously "Last Friday" -> Example: "Friday, Dec 27"
+                date = "Friday, Dec 27",
                 mood = "Peaceful",
                 description = "Watched a movie and relaxed.",
-                iconResId = R.drawable.peaceful_mood
+                iconResId = R.drawable.peaceful_mood,
+                timeStamp = "09:30 PM"
             )
         )
+    }
+
+    fun isExpanded(id: Int): Boolean {
+        return expandedStates[id] ?: false
+    }
+
+    fun toggleExpanded(id: Int) {
+        expandedStates[id] = !(expandedStates[id] ?: false)
     }
 
 
