@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,8 +33,8 @@ fun MultiSelectDropdownMenu(
     onClearSelection: () -> Unit,
     dropdownWidth: Dp = 380.dp // Default width for the dropdown
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var toggleAfterReset by remember { mutableStateOf(false) } // Tracks if dropdown should reopen after a reset
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var toggleAfterReset by rememberSaveable { mutableStateOf(false) } // Tracks if dropdown should reopen after a reset
 
     val selectedOptionsSorted = selectedOptions.sorted()
     val selectedCategory = if (label == "Moods") selectedOptions else selectedOptionsSorted

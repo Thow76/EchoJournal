@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
@@ -34,11 +35,9 @@ import com.example.echojournal.ui.theme.MoodColors
 @Composable
 fun JournalHistoryScreen(
     navController: NavController,
-    viewModel: JournalHistoryViewModel
+    viewModel: JournalHistoryViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val selectedMoods by viewModel.selectedMoods.collectAsState()
-    val selectedTopics by viewModel.selectedTopics.collectAsState()
 
     // Trigger loading of journal entries
     LaunchedEffect(Unit) {
@@ -61,14 +60,7 @@ fun JournalHistoryScreen(
                     .padding(paddingValues)
             ) {
                 FilterSection(
-                    selectedMoods = selectedMoods,
-                    selectedTopics = selectedTopics,
-                    onMoodSelected = { viewModel.addMoodFilter(it) },
-                    onMoodDeselected = { viewModel.removeMoodFilter(it) },
-                    onTopicSelected = { viewModel.addTopicFilter(it) },
-                    onTopicDeselected = { viewModel.removeTopicFilter(it) },
-                    onClearMoodSelection = { viewModel.clearAllMoodFilters()},
-                    onClearTopicSelection = { viewModel.clearAllTopicFilters()}
+                    viewModel = viewModel
                 )
                 Box(
                     modifier = Modifier

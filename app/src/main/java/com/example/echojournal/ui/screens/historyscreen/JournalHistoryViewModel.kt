@@ -24,19 +24,23 @@ class JournalHistoryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 _uiState.value = _uiState.value.copy(isLoading = true)
-                delay(2000)
+                delay(1000) // Simulate loading delay
+                val newEntries = getDummyJournalEntries()
+                // We store the new “raw” list
                 _uiState.value = _uiState.value.copy(
-                    journalEntries = getDummyJournalEntries(),
+                    allEntries = newEntries,
                     isLoading = false,
-                    errorMessage = null
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    errorMessage = "Failed to load journal entries: ${e.message}"
-                )
-            }
+                    errorMessage = null)
+                // Then filter them
+                applyFilters()
+        } catch (e: Exception) {
+            _uiState.value = _uiState.value.copy(
+                isLoading = false,
+                errorMessage = "Failed to load journal entries: ${e.message}"
+            )
         }
+    }
+
     }
     private fun getDummyJournalEntries(): List<JournalEntry> {
         return listOf(
@@ -125,18 +129,16 @@ class JournalHistoryViewModel : ViewModel() {
     }
 
     private fun applyFilters() {
-        val allEntries = getDummyJournalEntries() // Fetch all available journal entries
-
-        val filteredEntries = allEntries.filter { entry ->
-            // Filter by moods if any are selected
+        val all = _uiState.value.allEntries
+        val filtered = all.filter { entry ->
             (_selectedMoods.value.isEmpty() || entry.mood in _selectedMoods.value) &&
-                    // Filter by topics if any are selected
-                    (_selectedTopics.value.isEmpty() || _selectedTopics.value.any { topic -> entry.title.contains(topic, ignoreCase = true) })
+                    (_selectedTopics.value.isEmpty() ||
+                            _selectedTopics.value.any { topic -> entry.title.contains(topic, ignoreCase = true) })
         }
 
-        // Update the UI state with the filtered entries
-        _uiState.value = _uiState.value.copy(journalEntries = filteredEntries)
+        _uiState.value = _uiState.value.copy(journalEntries = filtered)
     }
+
 
     fun clearErrorMessage() {
         _uiState.value = _uiState.value.copy(errorMessage = null)

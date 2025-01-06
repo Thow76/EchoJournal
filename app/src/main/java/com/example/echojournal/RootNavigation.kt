@@ -16,7 +16,7 @@ fun NavigationRoot() {
         navController = navController,
         startDestination = "home") {
 
-        composable("home") { JournalHistoryScreen(navController, viewModel = JournalHistoryViewModel()) }
+        composable("home") { JournalHistoryScreen(navController) }
 
     }
 }

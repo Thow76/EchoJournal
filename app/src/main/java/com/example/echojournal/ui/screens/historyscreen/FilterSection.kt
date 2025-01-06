@@ -6,22 +6,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.MultiSelectDropdownMenu
 
 
 @Composable
 fun FilterSection(
-    selectedMoods: Set<String>,
-    selectedTopics: Set<String>,
-    onMoodSelected: (String) -> Unit,
-    onMoodDeselected: (String) -> Unit,
-    onTopicSelected: (String) -> Unit,
-    onTopicDeselected: (String) -> Unit,
-    onClearMoodSelection: () -> Unit,
-    onClearTopicSelection: () -> Unit,
+    viewModel: JournalHistoryViewModel = viewModel(),
 ) {
+    val selectedMoods by viewModel.selectedMoods.collectAsState()
+    val selectedTopics by viewModel.selectedTopics.collectAsState()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -31,9 +29,9 @@ fun FilterSection(
             label = "Moods",
             options = listOf("Stressed", "Sad", "Neutral", "Peaceful", "Excited").sortedBy { (it.first()) },
             selectedOptions = selectedMoods,
-            onOptionSelected = onMoodSelected,
-            onOptionDeselected = onMoodDeselected,
-            onClearSelection = onClearMoodSelection
+            onOptionSelected = { chosen -> viewModel.addMoodFilter(chosen) },
+            onOptionDeselected = { chosen -> viewModel.removeMoodFilter(chosen) },
+            onClearSelection = { viewModel.clearAllMoodFilters() }
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -42,9 +40,9 @@ fun FilterSection(
             label = "Topics",
             options = listOf("Work", "Friends", "Family", "Love", "Surprise").sortedBy { (it.first()) },
             selectedOptions = selectedTopics,
-            onOptionSelected = onTopicSelected,
-            onOptionDeselected = onTopicDeselected,
-            onClearSelection = onClearTopicSelection
+            onOptionSelected = { chosen -> viewModel.addTopicFilter(chosen) },
+            onOptionDeselected = { chosen -> viewModel.removeTopicFilter(chosen) },
+            onClearSelection = { viewModel.clearAllTopicFilters() }
         )
     }
 }
