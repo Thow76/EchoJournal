@@ -3,6 +3,8 @@ package com.example.echojournal.ui.screens.historyscreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -12,7 +14,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,6 +38,7 @@ import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
+import com.example.echojournal.ui.components.GradientFloatingActionButton
 import com.example.echojournal.ui.components.LoadingIndicator
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.MoodColors
@@ -60,7 +65,13 @@ fun JournalHistoryScreen(
             containerColor = Color.Transparent,
             topBar = {
                 CustomAppBar(title = stringResource(id = R.string.history_screen_heading))
-            }
+            },
+            floatingActionButton = {
+                GradientFloatingActionButton(
+                    onClick = { navController.navigate("new_entry") },
+                    icon = { Icon(modifier = Modifier.size(32.dp), imageVector = Icons.Default.Add, contentDescription = "", tint = Color.White)},
+                    "Add New Entry")
+            },
         ) { paddingValues ->
             Column(
                 modifier = Modifier
