@@ -24,8 +24,9 @@ import androidx.compose.runtime.Composable
             surface = MaterialColors.SurfacePrimary100,
             surfaceVariant = MaterialColors.InverseOnSurfaceSecondary95,
             onSurface = MaterialColors.OnSurfaceNeutralVariant10,
-            error = ErrorColors.Error95,
-            onError = MaterialColors.OnError100
+            error = ErrorColors.Error20,
+            onError = MaterialColors.OnErrorContainer20,
+            onErrorContainer = ErrorColors.Error95
         )
         MaterialTheme(
             colorScheme = appColorScheme,
