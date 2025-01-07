@@ -50,6 +50,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
+    // Add runtime-livedata **after** the BOM
+    implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.core.splashscreen)
     implementation(libs.google.fonts)
     testImplementation(libs.junit)
