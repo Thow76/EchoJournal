@@ -60,6 +60,7 @@ dependencies {
 
     // Add runtime-livedata **after** the BOM
     implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.accompanist.permissions)
     implementation(libs.core.splashscreen)
     implementation(libs.google.fonts)
     testImplementation(libs.junit)
