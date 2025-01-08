@@ -1,96 +1,106 @@
 package com.example.echojournal.ui.screens.recordscreen
 
-import android.media.MediaRecorder
-import android.os.Build
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.echojournal.audioplayback.AudioPlayer
+import com.example.echojournal.audiorecorder.AudioRecorder
+import com.example.echojournal.data.AudioRepository
 import java.io.File
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class RecordingViewModel : ViewModel() {
+@HiltViewModel
+class RecordingViewModel @Inject constructor(
+    private val recorder: AudioRecorder,
+    private val player: AudioPlayer,
+    private val audioRepository: AudioRepository
+) : ViewModel() {
 
     var isRecording: Boolean = false
         private set
     var isPaused: Boolean = false
         private set
 
-    private var mediaRecorder: MediaRecorder? = null
-    private var outputFile: File? = null
+    private var currentOutputFile: File? = null
 
     /**
-     * Start recording immediately:
-     *  - Creates an output file (in external files dir, for example).
-     *  - Prepares and starts MediaRecorder.
+     * Starts recording by creating a new file and initiating the recorder.
+     * @param name The base name for the recording file.
      */
-    fun startRecording(outputFile: File) {
-        this.outputFile = outputFile
-        mediaRecorder = MediaRecorder().apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setOutputFile(outputFile.absolutePath)
+    fun startRecording(name: String) {
+        val file = audioRepository.createRecordingFile(name)
+        currentOutputFile = file
+        recorder.start(file)
+        isRecording = true
+        isPaused = false
+    }
 
-            try {
-                prepare()
-                start()
-                isRecording = true
-                isPaused = false
-                Log.d("RecordingViewModel", "Started recording to $outputFile")
-            } catch (e: Exception) {
-                e.printStackTrace()
-                resetRecorder()
-            }
+    /**
+     * Pauses the ongoing recording.
+     */
+    fun pauseRecording() {
+        if (isRecording && !isPaused) {
+            recorder.pause()
+            isPaused = true
         }
     }
 
-    fun pauseRecording() {
-        mediaRecorder?.pause()
-        isPaused = true
-        Log.d("RecordingViewModel", "Paused recording.")
-    }
-
+    /**
+     * Resumes a paused recording.
+     */
     fun resumeRecording() {
-        mediaRecorder?.resume()
-        isPaused = false
-        Log.d("RecordingViewModel", "Resumed recording.")
+        if (isRecording && isPaused) {
+            recorder.resume()
+            isPaused = false
+        }
     }
 
     /**
-     * Stop and finalize the recording, returning the file path if successful.
+     * Stops the recording and returns the file path if successful.
+     * @return The absolute path of the recorded file or null if failed.
      */
     fun stopRecording(): String? {
         return try {
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-            val filePath = outputFile?.absolutePath
-            resetRecorder()
-            filePath
+            recorder.stop()
+            isRecording = false
+            isPaused = false
+            currentOutputFile?.absolutePath
         } catch (e: Exception) {
             e.printStackTrace()
-            resetRecorder()
             null
         }
     }
 
     /**
-     * Cancel the recording, discarding the file.
+     * Cancels the recording and deletes the partial file.
      */
     fun cancelRecording() {
-        try {
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            // Delete partial file
-            outputFile?.delete()
-            resetRecorder()
-        }
-    }
-
-    private fun resetRecorder() {
-        mediaRecorder = null
-        outputFile = null
+        recorder.cancel()
         isRecording = false
         isPaused = false
+        currentOutputFile = null
+    }
+
+    /**
+     * Plays the specified audio file.
+     * @param file The File to play.
+     */
+    fun playRecording(file: File) {
+        player.playFile(file)
+    }
+
+    /**
+     * Stops any ongoing playback.
+     */
+    fun stopPlayback() {
+        player.stop()
+    }
+
+    /**
+     * Retrieves all recorded audio files.
+     * @return List of audio Files.
+     */
+    fun getAllRecordings(): List<File> {
+        return audioRepository.getAllAudioFiles()
     }
 }
+
