@@ -1,30 +1,20 @@
 package com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.echojournal.ui.components.CustomButton
-import com.example.echojournal.ui.components.CustomGradientButton
+import com.example.echojournal.ui.components.RecordingTimer
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
-import com.example.echojournal.ui.theme.MaterialColors
-
 
 @Composable
 fun RecordSheetContent(
@@ -32,37 +22,44 @@ fun RecordSheetContent(
     onCloseSheet: () -> Unit,
     onComplete: (String) -> Unit
 ) {
-    // Example path; replace with real path logic as needed
-    val dummyFilePath = "/some/fake/path/audio_${System.currentTimeMillis()}.mp4"
+    // Collect the recording states once to avoid multiple collectAsState() calls
+    val isRecording by recordingViewModel.isRecording.collectAsState()
+    val isPaused by recordingViewModel.isPaused.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp), // Optional: Add padding as needed
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1. Title / Prompt
-        Text(
-            text = "Recording your memories...",
-            style = MaterialTheme.typography.titleMedium
+        // Conditionally display messages based on the recording state
+        if (isPaused) {
+            Text(
+                text = "Recording is paused",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        } else if (isRecording) {
+            Text(
+                text = "Recording your memories...",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        // Display the Recording Timer
+        RecordingTimer(
+            isRecording = isRecording,
+            isPaused = isPaused
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp)) // Space between timer and buttons
 
-        // 2. Row of three circular buttons
-        RecordBottomSheetButtons(recordingViewModel, onCloseSheet)
-        }
-        Spacer(modifier = Modifier.height(24.dp))
-        // 3. (Optional) Show current recording state or any other UI
-        Text(
-            text = when {
-                recordingViewModel.isPaused -> "Recording paused..."
-                recordingViewModel.isRecording -> "Recording in progress..."
-                else -> ""
-            },
-            style = MaterialTheme.typography.bodyLarge
+        // Recording Buttons with Ripple Effect
+        RecordBottomSheetButtons(
+            recordingViewModel = recordingViewModel,
+            onCloseSheet = onCloseSheet
         )
     }
+}
 
 
 
