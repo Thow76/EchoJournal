@@ -1,77 +1,89 @@
 package com.example.echojournal.ui.screens.historyscreen
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.echojournal.data.JournalEntry
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
-import com.example.echojournal.ui.components.GradientFloatingActionButton
+import com.example.echojournal.ui.components.CustomGradientButton
 import com.example.echojournal.ui.components.LoadingIndicator
-import com.example.echojournal.ui.screens.recordscreen.RecordSheetContent
+import com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent.RecordSheetContent
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 import com.example.echojournal.ui.theme.Gradients
-import com.example.echojournal.ui.theme.MoodColors
+import androidx.compose.runtime.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
+import com.example.echojournal.ui.components.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun JournalHistoryScreen(
     navController: NavController,
-    viewModel: JournalHistoryViewModel = viewModel()
+    journalHistoryViewModel: JournalHistoryViewModel = hiltViewModel(),
+    recordingViewModel: RecordingViewModel = hiltViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by journalHistoryViewModel.uiState.collectAsState()
 
-    // Trigger loading of journal entries
-    LaunchedEffect(Unit) {
-        viewModel.loadJournalEntries()
-    }
+    // Permission State
+    val recordAudioPermissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
 
     // Control for showing/hiding the bottom sheet
     val showRecordSheet = remember { mutableStateOf(false) }
 
-    // If you want a custom RecordingViewModel, remember it here
-    // (or inject via Hilt, etc.)
-    val recordingViewModel = remember { RecordingViewModel() }
+    // State to track if the user has requested recording
+    val isRecordingRequested = remember { mutableStateOf(false) }
 
     // Remember a sheet state (to control partial vs full expansion)
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    // Snackbar support
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // LaunchedEffect to handle permission grant when recording is requested
+    LaunchedEffect(recordAudioPermissionState.status) {
+        if (recordAudioPermissionState.status == PermissionStatus.Granted && isRecordingRequested.value) {
+            Log.d("JournalHistoryScreen", "Permission granted. Starting recording.")
+            isRecordingRequested.value = false // Reset the request flag
+            showRecordSheet.value = true
+            recordingViewModel.startRecording()
+        } else if (recordAudioPermissionState.status is PermissionStatus.Denied && isRecordingRequested.value) {
+            Log.d("JournalHistoryScreen", "Permission denied.")
+            isRecordingRequested.value = false // Reset the request flag
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("Permission denied. Cannot record audio.")
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -79,23 +91,35 @@ fun JournalHistoryScreen(
             .background(brush = Gradients.BgSaturateGradient)
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             containerColor = Color.Transparent,
             topBar = {
                 CustomAppBar(title = stringResource(id = R.string.history_screen_heading))
             },
             floatingActionButton = {
-                GradientFloatingActionButton(
+                CustomGradientButton(
                     onClick = {
-                        // Instead of navController.navigate("new_entry"),
-                        // we toggle the bottom sheet:
-                        showRecordSheet.value = true
+                        coroutineScope.launch {
+                            if (recordAudioPermissionState.status != PermissionStatus.Granted) {
+                                // User has initiated a recording request
+                                Log.d("JournalHistoryScreen", "Requesting recording permission.")
+                                isRecordingRequested.value = true
+                                recordAudioPermissionState.launchPermissionRequest()
+                            } else {
+                                // Permission already granted; start recording
+                                Log.d("JournalHistoryScreen", "Permission already granted. Starting recording.")
+                                showRecordSheet.value = true
+                                recordingViewModel.startRecording()
+                            }
+                        }
                     },
                     icon = {
                         Icon(
                             modifier = Modifier.size(32.dp),
                             imageVector = Icons.Default.Add,
-                            contentDescription = "",
-                            tint = Color.White)
+                            contentDescription = "Record",
+                            tint = Color.White
+                        )
                     },
                     contentDescription = "Record a new entry"
                 )
@@ -107,7 +131,7 @@ fun JournalHistoryScreen(
                     .padding(paddingValues)
             ) {
                 FilterSection(
-                    viewModel = viewModel
+                    viewModel = journalHistoryViewModel
                 )
                 Box(
                     modifier = Modifier
@@ -123,7 +147,7 @@ fun JournalHistoryScreen(
                             ErrorSnackbar(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 errorMessage = "Error: ${uiState.errorMessage}",
-                                onDismiss = viewModel::clearErrorMessage
+                                onDismiss = journalHistoryViewModel::clearErrorMessage
                             )
                         }
 
@@ -144,8 +168,10 @@ fun JournalHistoryScreen(
     if (showRecordSheet.value) {
         ModalBottomSheet(
             onDismissRequest = {
-                // If user swipes down or taps outside, hide the sheet
+                // If user swipes down or taps outside, hide the sheet and stop recording
+                Log.d("JournalHistoryScreen", "Bottom sheet dismissed. Stopping recording.")
                 showRecordSheet.value = false
+                recordingViewModel.stopRecording()
             },
             sheetState = sheetState
         ) {
@@ -153,18 +179,24 @@ fun JournalHistoryScreen(
             RecordSheetContent(
                 recordingViewModel = recordingViewModel,
                 onCloseSheet = {
+                    Log.d("JournalHistoryScreen", "Close sheet clicked. Stopping recording.")
                     showRecordSheet.value = false
+                    recordingViewModel.stopRecording()
                 },
                 onComplete = { filePath ->
-                    // Possibly navigate after finishing recording, e.g.:
-                    // navController.navigate("new_entry?audioFile=$filePath")
+                    // Handle the completed recording
+                    Log.d("JournalHistoryScreen", "Recording completed. Saved at $filePath")
                     showRecordSheet.value = false
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Recording saved: $filePath")
+                    }
+                    // Optionally, refresh journal entries or navigate
+                    journalHistoryViewModel.loadJournalEntries()
                 }
             )
         }
     }
 }
-
 
 
 
