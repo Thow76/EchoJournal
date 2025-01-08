@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AndroidAudioRecorder @Inject constructor(
-    private val context: Context
+    @ApplicationContext private val context: Context
 ) : AudioRecorder {
 
     private var recorder: MediaRecorder? = null
