@@ -1,12 +1,17 @@
 package com.example.echojournal.ui.screens.recordscreen
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.echojournal.audioplayback.AudioPlayer
 import com.example.echojournal.audiorecorder.AudioRecorder
-import com.example.echojournal.data.AudioRepository
+import com.example.echojournal.repository.AudioRepository
 import java.io.File
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
 class RecordingViewModel @Inject constructor(
@@ -15,32 +20,46 @@ class RecordingViewModel @Inject constructor(
     private val audioRepository: AudioRepository
 ) : ViewModel() {
 
-    var isRecording: Boolean = false
-        private set
-    var isPaused: Boolean = false
-        private set
+    private val _isRecording = MutableStateFlow(false)
+    val isRecording: StateFlow<Boolean> = _isRecording
+
+    private val _isPaused = MutableStateFlow(false)
+    val isPaused: StateFlow<Boolean> = _isPaused
 
     private var currentOutputFile: File? = null
 
     /**
      * Starts recording by creating a new file and initiating the recorder.
-     * @param name The base name for the recording file.
      */
-    fun startRecording(name: String) {
-        val file = audioRepository.createRecordingFile(name)
-        currentOutputFile = file
-        recorder.start(file)
-        isRecording = true
-        isPaused = false
+    fun startRecording() {
+        viewModelScope.launch {
+            try {
+                val file = audioRepository.createRecordingFile()
+                currentOutputFile = file
+                recorder.start(file)
+                _isRecording.value = true
+                _isPaused.value = false
+                Log.d("RecordingViewModel", "Recording started: ${file.absolutePath}")
+            } catch (e: Exception) {
+                Log.e("RecordingViewModel", "Error starting recording: ${e.localizedMessage}")
+            }
+        }
     }
 
     /**
      * Pauses the ongoing recording.
      */
     fun pauseRecording() {
-        if (isRecording && !isPaused) {
-            recorder.pause()
-            isPaused = true
+        viewModelScope.launch {
+            if (_isRecording.value && !_isPaused.value) {
+                try {
+                    recorder.pause()
+                    _isPaused.value = true
+                    Log.d("RecordingViewModel", "Recording paused.")
+                } catch (e: Exception) {
+                    Log.e("RecordingViewModel", "Error pausing recording: ${e.localizedMessage}")
+                }
+            }
         }
     }
 
@@ -48,9 +67,16 @@ class RecordingViewModel @Inject constructor(
      * Resumes a paused recording.
      */
     fun resumeRecording() {
-        if (isRecording && isPaused) {
-            recorder.resume()
-            isPaused = false
+        viewModelScope.launch {
+            if (_isRecording.value && _isPaused.value) {
+                try {
+                    recorder.resume()
+                    _isPaused.value = false
+                    Log.d("RecordingViewModel", "Recording resumed.")
+                } catch (e: Exception) {
+                    Log.e("RecordingViewModel", "Error resuming recording: ${e.localizedMessage}")
+                }
+            }
         }
     }
 
@@ -61,11 +87,12 @@ class RecordingViewModel @Inject constructor(
     fun stopRecording(): String? {
         return try {
             recorder.stop()
-            isRecording = false
-            isPaused = false
+            _isRecording.value = false
+            _isPaused.value = false
+            Log.d("RecordingViewModel", "Recording stopped.")
             currentOutputFile?.absolutePath
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e("RecordingViewModel", "Error stopping recording: ${e.localizedMessage}")
             null
         }
     }
@@ -74,10 +101,17 @@ class RecordingViewModel @Inject constructor(
      * Cancels the recording and deletes the partial file.
      */
     fun cancelRecording() {
-        recorder.cancel()
-        isRecording = false
-        isPaused = false
-        currentOutputFile = null
+        viewModelScope.launch {
+            try {
+                recorder.cancel()
+                _isRecording.value = false
+                _isPaused.value = false
+                Log.d("RecordingViewModel", "Recording canceled.")
+                currentOutputFile = null
+            } catch (e: Exception) {
+                Log.e("RecordingViewModel", "Error canceling recording: ${e.localizedMessage}")
+            }
+        }
     }
 
     /**
@@ -85,14 +119,24 @@ class RecordingViewModel @Inject constructor(
      * @param file The File to play.
      */
     fun playRecording(file: File) {
-        player.playFile(file)
+        try {
+            player.playFile(file)
+            Log.d("RecordingViewModel", "Playing recording: ${file.absolutePath}")
+        } catch (e: Exception) {
+            Log.e("RecordingViewModel", "Error playing recording: ${e.localizedMessage}")
+        }
     }
 
     /**
      * Stops any ongoing playback.
      */
     fun stopPlayback() {
-        player.stop()
+        try {
+            player.stop()
+            Log.d("RecordingViewModel", "Playback stopped.")
+        } catch (e: Exception) {
+            Log.e("RecordingViewModel", "Error stopping playback: ${e.localizedMessage}")
+        }
     }
 
     /**
@@ -103,4 +147,3 @@ class RecordingViewModel @Inject constructor(
         return audioRepository.getAllAudioFiles()
     }
 }
-
