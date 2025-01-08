@@ -14,7 +14,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.echojournal.ui.theme.EchoJournalTheme
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryScreen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
