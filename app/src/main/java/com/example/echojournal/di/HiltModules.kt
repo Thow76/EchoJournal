@@ -4,10 +4,10 @@ import com.example.echojournal.audioplayback.AndroidAudioPlayer
 import com.example.echojournal.audioplayback.AudioPlayer
 import com.example.echojournal.audiorecorder.AndroidAudioRecorder
 import com.example.echojournal.audiorecorder.AudioRecorder
-import com.example.echojournal.data.AudioRepository
 
 import javax.inject.Singleton
 import android.content.Context
+import com.example.echojournal.repository.AudioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,8 +1,9 @@
-package com.example.echojournal.data
-
+package com.example.echojournal.repository
 
 import android.content.Context
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,12 +15,12 @@ class AudioRepository @Inject constructor(
     private val directory: File = context.cacheDir
 
     /**
-     * Creates a new audio file in the cache directory with the given name.
-     * @param name The base name of the file (without extension).
+     * Creates a new audio file with a unique name in the cache directory.
      * @return The created File object.
      */
-    fun createRecordingFile(name: String): File {
-        val fileName = "$name.m4a"
+    fun createRecordingFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val fileName = "AUDIO_${timeStamp}.m4a"
         return File(directory, fileName)
     }
 
@@ -41,6 +42,7 @@ class AudioRepository @Inject constructor(
         return directory.listFiles { file -> file.extension == "m4a" }?.toList() ?: emptyList()
     }
 }
+
 
 
 
