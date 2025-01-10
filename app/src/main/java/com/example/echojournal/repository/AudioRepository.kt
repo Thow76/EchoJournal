@@ -19,7 +19,7 @@ class AudioRepository @Inject constructor(
      * @return The created File object.
      */
     fun createRecordingFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(Date())
         val fileName = "AUDIO_${timeStamp}.m4a"
         return File(directory, fileName)
     }
