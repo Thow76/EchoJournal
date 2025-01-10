@@ -1,6 +1,6 @@
 package com.example.echojournal.ui.screens.historyscreen
 
-import com.example.echojournal.data.JournalEntry
+import com.example.echojournal.model.JournalEntry
 
 data class JournalHistoryUiState(
     val allEntries: List<JournalEntry> = emptyList(),

@@ -3,14 +3,20 @@ package com.example.echojournal.ui.screens.historyscreen
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.echojournal.R
-import com.example.echojournal.data.JournalEntry
-import kotlinx.coroutines.delay
+import com.example.echojournal.model.JournalEntry
+import com.example.echojournal.data.JournalRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class JournalHistoryViewModel : ViewModel() {
+@HiltViewModel
+class JournalHistoryViewModel @Inject constructor(
+    private val repository: JournalRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(JournalHistoryUiState())
     val uiState: StateFlow<JournalHistoryUiState> = _uiState
@@ -23,95 +29,43 @@ class JournalHistoryViewModel : ViewModel() {
 
     private val expandedStates = mutableStateMapOf<Int, Boolean>()
 
-    fun loadJournalEntries() {
+    val journalEntries: StateFlow<List<JournalEntry>> = repository
+        .getAllJournalEntries()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    fun addJournalEntry(entry: JournalEntry) {
         viewModelScope.launch {
-            try {
-                _uiState.value = _uiState.value.copy(isLoading = true)
-                delay(1000) // Simulate loading delay
-                val newEntries = getDummyJournalEntries()
-                // We store the new “raw” list
-                _uiState.value = _uiState.value.copy(
-                    allEntries = newEntries,
-                    isLoading = false,
-                    errorMessage = null)
-                // Then filter them
-                applyFilters()
-        } catch (e: Exception) {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                errorMessage = "Failed to load journal entries: ${e.message}"
-            )
+            repository.addJournalEntry(entry)
         }
     }
 
+    fun removeJournalEntry(entryId: Int) {
+        viewModelScope.launch {
+            repository.removeJournalEntry(entryId)
+        }
     }
-    private fun getDummyJournalEntries(): List<JournalEntry> {
-        return listOf(
-            JournalEntry(
-                id = 1,
-                title = "Family",
-                date = "Today", // Remains "Today"
-                mood = "Peaceful",
-                description = "A reflective morning.",
-                iconResId = R.drawable.peaceful_mood,
-                timeStamp = "09:00 AM"
-            ),
-            JournalEntry(
-                id = 2,
-                title = "Friends",
-                date = "Yesterday", // Remains "Yesterday"
-                mood = "Neutral",
-                description = """
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse eu erat quis libero lacinia imperdiet.
-                Maecenas vehicula nisl sit amet feugiat porta.
-                Integer mollis enim quis imperdiet consequat.
-            """.trimIndent(),
-                iconResId = R.drawable.neutral_mood,
-                timeStamp = "07:15 PM"
-            ),
-            JournalEntry(
-                id = 3,
-                title = "Love",
-                // Previously "Saturday" -> Now in the style: "Saturday, Dec 28"
-                date = "Saturday, Dec 28",
-                mood = "Sad",
-                description = "An emotional evening recap.",
-                iconResId = R.drawable.sad_mood,
-                timeStamp = "10:30 PM"
-            ),
-            JournalEntry(
-                id = 4,
-                title = "Surprise",
-                // Previously "Last Weekend" -> Example: "Sunday, Dec 29"
-                date = "Sunday, Dec 29",
-                mood = "Excited",
-                description = "Explored a new hiking trail.",
-                iconResId = R.drawable.excited_mood,
-                timeStamp = "02:00 PM"
-            ),
-            JournalEntry(
-                id = 5,
-                title = "Work",
-                // Previously "Last Monday" -> Example: "Monday, Dec 30"
-                date = "Monday, Dec 30",
-                mood = "Stressed",
-                description = "Busy day at work.",
-                iconResId = R.drawable.stressed_mood,
-                timeStamp = "11:45 AM"
-            ),
-            JournalEntry(
-                id = 6,
-                title = "Work",
-                // Previously "Last Friday" -> Example: "Friday, Dec 27"
-                date = "Friday, Dec 27",
-                mood = "Peaceful",
-                description = "Watched a movie and relaxed.",
-                iconResId = R.drawable.peaceful_mood,
-                timeStamp = "09:30 PM"
-            )
-        )
-    }
+//    fun loadJournalEntries() {
+//        viewModelScope.launch {
+//            try {
+//                _uiState.value = _uiState.value.copy(isLoading = true)
+//                delay(1000) // Simulate loading delay
+//                val newEntries = journalEntries
+//                // We store the new “raw” list
+//                _uiState.value = _uiState.value.copy(
+//                    allEntries = newEntries,
+//                    isLoading = false,
+//                    errorMessage = null)
+//                // Then filter them
+//                applyFilters()
+//        } catch (e: Exception) {
+//            _uiState.value = _uiState.value.copy(
+//                isLoading = false,
+//                errorMessage = "Failed to load journal entries: ${e.message}"
+//            )
+//        }
+//    }
+
+//    }
 
     fun isExpanded(id: Int): Boolean {
         return expandedStates[id] ?: false

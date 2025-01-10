@@ -1,9 +1,12 @@
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -56,7 +59,12 @@ dependencies {
     //    Hilt
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.datastore.core.android)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.datastore)
+    implementation(libs.datastore.core)
+    implementation(libs.kotlinx.serialization.json)
 
     // Add runtime-livedata **after** the BOM
     implementation(libs.androidx.compose.runtime.livedata)
