@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryScreen
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
+import com.example.echojournal.ui.screens.recordscreen.CreateEntryScreen
 
 @Composable
 fun NavigationRoot() {
@@ -17,6 +18,7 @@ fun NavigationRoot() {
         startDestination = "home") {
 
         composable("home") { JournalHistoryScreen(navController) }
+        composable("createEntry") { CreateEntryScreen(navController) }
 
     }
 }
