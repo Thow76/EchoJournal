@@ -13,18 +13,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.echojournal.ui.components.RecordingTimer
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 
 @Composable
 fun RecordSheetContent(
+    navController: NavController,
     recordingViewModel: RecordingViewModel,
     onCloseSheet: () -> Unit,
     onComplete: (String) -> Unit
 ) {
-    // Collect the recording states once to avoid multiple collectAsState() calls
-    val isRecording by recordingViewModel.isRecording.collectAsState()
-    val isPaused by recordingViewModel.isPaused.collectAsState()
+    val uiState by recordingViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -33,22 +33,25 @@ fun RecordSheetContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Conditionally display messages based on the recording state
-        if (isPaused) {
-            Text(
-                text = "Recording is paused",
-                style = MaterialTheme.typography.titleLarge,
-            )
-        } else if (isRecording) {
-            Text(
-                text = "Recording your memories...",
-                style = MaterialTheme.typography.titleLarge,
-            )
+        when {
+            uiState.isPaused -> {
+                Text(
+                    text = "Recording is paused",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            uiState.isRecording -> {
+                Text(
+                    text = "Recording your memories...",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
         }
 
         // Display the Recording Timer
         RecordingTimer(
-            isRecording = isRecording,
-            isPaused = isPaused
+            isRecording = uiState.isRecording,
+            isPaused = uiState.isPaused
         )
 
         Spacer(modifier = Modifier.height(32.dp)) // Space between timer and buttons
@@ -56,10 +59,12 @@ fun RecordSheetContent(
         // Recording Buttons with Ripple Effect
         RecordBottomSheetButtons(
             recordingViewModel = recordingViewModel,
-            onCloseSheet = onCloseSheet
+            onCloseSheet = onCloseSheet,
+            navController = navController
         )
     }
 }
+
 
 
 

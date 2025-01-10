@@ -25,15 +25,99 @@ import com.example.echojournal.ui.components.CustomGradientButton
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 import com.example.echojournal.ui.theme.MaterialColors
 import androidx.compose.material.icons.filled.Mic
+import androidx.navigation.NavController
+
+//@Composable
+//fun RecordBottomSheetButtons(
+//    navController: NavController,
+//    recordingViewModel: RecordingViewModel,
+//    onCloseSheet: () -> Unit
+//) {
+//    // Collect the isPaused and isRecording states as Compose state
+//    val isPaused by recordingViewModel.isPaused.collectAsState()
+//    val isRecording by recordingViewModel.isRecording.collectAsState()
+//
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(16.dp),
+//        horizontalArrangement = Arrangement.SpaceEvenly,
+//        verticalAlignment = Alignment.Bottom
+//    ) {
+//        // Left Button: Close (X) icon
+//        CustomButton(
+//            onClick = {
+//                recordingViewModel.stopRecording()
+//                onCloseSheet()
+//            },
+//            modifier = Modifier
+//                .size(48.dp), // Smaller circle
+//            icon = Icons.Default.Close,
+//            shape = CircleShape,
+//            iconTint = MaterialTheme.colorScheme.error,
+//            backgroundColor = MaterialColors.ErrorContainer95,
+//            contentDescription = "Cancel Recording"
+//        )
+//
+//        // Center Button: Check or Microphone icon with RippleEffect
+//        Box(
+//            contentAlignment = Alignment.Center,
+//            modifier = Modifier.size(64.dp) // Larger size to accommodate ripple
+//        ) {
+//            // The actual Check or Microphone button
+//            CustomGradientButton(
+//                onClick = {
+//                    if (isRecording) {
+//                        navController.navigate("createEntry")
+//                    }
+//                    else if (isPaused) {
+//                        // If recording is paused, resume recording
+//                        recordingViewModel.resumeRecording()
+//                    } else {
+//                        // If recording is active, stop recording
+//                        recordingViewModel.stopRecording()
+//                        onCloseSheet()
+//                    }
+//                },
+//                icon = {
+//                    Icon(
+//                        imageVector = if (isPaused) Icons.Default.Mic else Icons.Default.Check,
+//                        tint = MaterialTheme.colorScheme.onPrimary,
+//                        contentDescription = if (isPaused) "Resume Recording" else "Stop Recording"
+//                    )
+//                },
+//                contentDescription = if (isPaused) "Resume Recording" else "Stop Recording"
+//            )
+//        }
+//
+//        // Right Button: Pause/Resume icon
+//        CustomButton(
+//            onClick = {
+//                if (isPaused) {
+//                    recordingViewModel.resumeRecording()
+//                } else {
+//                    recordingViewModel.pauseRecording()
+//                }
+//            },
+//            modifier = Modifier
+//                .size(48.dp), // Smaller circle
+//            icon = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+//            shape = CircleShape,
+//            iconTint = MaterialTheme.colorScheme.primary,
+//            backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+//            contentDescription = if (isPaused) "Resume Recording" else "Pause Recording"
+//        )
+//    }
+//}
+//
 
 @Composable
 fun RecordBottomSheetButtons(
+    navController: NavController,
     recordingViewModel: RecordingViewModel,
     onCloseSheet: () -> Unit
 ) {
-    // Collect the isPaused and isRecording states as Compose state
-    val isPaused by recordingViewModel.isPaused.collectAsState()
-    val isRecording by recordingViewModel.isRecording.collectAsState()
+    val uiState by recordingViewModel.uiState.collectAsState()
 
     Row(
         modifier = Modifier
@@ -45,7 +129,7 @@ fun RecordBottomSheetButtons(
         // Left Button: Close (X) icon
         CustomButton(
             onClick = {
-                recordingViewModel.stopRecording()
+                recordingViewModel.cancelRecording()
                 onCloseSheet()
             },
             modifier = Modifier
@@ -57,38 +141,37 @@ fun RecordBottomSheetButtons(
             contentDescription = "Cancel Recording"
         )
 
-        // Center Button: Check or Microphone icon with RippleEffect
+        // Center Button: Check or Microphone icon
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(64.dp) // Larger size to accommodate ripple
         ) {
-            // The actual Check or Microphone button
             CustomGradientButton(
                 onClick = {
-                    if (isPaused) {
-                        // If recording is paused, resume recording
+                    if (uiState.isRecording && !uiState.isPaused) {
+                        navController.navigate("createEntry")
+                    } else if (uiState.isPaused) {
                         recordingViewModel.resumeRecording()
                     } else {
-                        // If recording is active, stop recording
                         recordingViewModel.stopRecording()
                         onCloseSheet()
                     }
                 },
                 icon = {
                     Icon(
-                        imageVector = if (isPaused) Icons.Default.Mic else Icons.Default.Check,
+                        imageVector = if (uiState.isPaused) Icons.Default.Mic else Icons.Default.Check,
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = if (isPaused) "Resume Recording" else "Stop Recording"
+                        contentDescription = if (uiState.isPaused) "Resume Recording" else "Stop Recording"
                     )
                 },
-                contentDescription = if (isPaused) "Resume Recording" else "Stop Recording"
+                contentDescription = if (uiState.isPaused) "Resume Recording" else "Stop Recording"
             )
         }
 
         // Right Button: Pause/Resume icon
         CustomButton(
             onClick = {
-                if (isPaused) {
+                if (uiState.isPaused) {
                     recordingViewModel.resumeRecording()
                 } else {
                     recordingViewModel.pauseRecording()
@@ -96,13 +179,12 @@ fun RecordBottomSheetButtons(
             },
             modifier = Modifier
                 .size(48.dp), // Smaller circle
-            icon = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
+            icon = if (uiState.isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
             shape = CircleShape,
             iconTint = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentDescription = if (isPaused) "Resume Recording" else "Pause Recording"
+            contentDescription = if (uiState.isPaused) "Resume Recording" else "Pause Recording"
         )
     }
 }
-
 

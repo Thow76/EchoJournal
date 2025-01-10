@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.historyscreen
 
+import android.Manifest
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -52,7 +53,7 @@ fun JournalHistoryScreen(
     val uiState by journalHistoryViewModel.uiState.collectAsState()
 
     // Permission State
-    val recordAudioPermissionState = rememberPermissionState(android.Manifest.permission.RECORD_AUDIO)
+    val recordAudioPermissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO)
 
     // Control for showing/hiding the bottom sheet
     val showRecordSheet = remember { mutableStateOf(false) }
@@ -191,8 +192,9 @@ fun JournalHistoryScreen(
                         snackbarHostState.showSnackbar("Recording saved: $filePath")
                     }
                     // Optionally, refresh journal entries or navigate
-                    journalHistoryViewModel.loadJournalEntries()
-                }
+                    journalHistoryViewModel.journalEntries
+                },
+                navController = navController
             )
         }
     }

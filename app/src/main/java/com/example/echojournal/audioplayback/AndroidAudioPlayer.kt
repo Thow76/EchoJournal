@@ -42,5 +42,18 @@ class AndroidAudioPlayer @Inject constructor(
         }
         player = null
     }
+
+    override fun duration(): Long {
+        return player?.duration?.toLong() ?: 0L
+    }
+
+    override fun getCurrentPosition(): Long {
+        return player?.currentPosition?.toLong() ?: 0L
+    }
+
+    override fun seekTo(position: Long) {
+        player?.seekTo(position.toInt())
+    }
 }
+
 

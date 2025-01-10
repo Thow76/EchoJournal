@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.R
-import com.example.echojournal.data.JournalEntry
+import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.theme.MoodColors
 
 @Composable
