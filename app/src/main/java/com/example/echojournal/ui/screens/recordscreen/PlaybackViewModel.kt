@@ -39,6 +39,11 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
                 }
                 Log.d("PlaybackViewModel", "File loaded: $filePath with duration: $fileDuration ms")
             }
+            setOnCompletionListener {
+                _uiState.update { it.copy(isPlaybackActive = false) }
+                mediaPlayer?.seekTo(0)
+                Log.d("PlaybackViewModel", "Playback completed.")
+            }
             prepareAsync()
         }
     }
