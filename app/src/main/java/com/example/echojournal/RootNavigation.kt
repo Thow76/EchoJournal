@@ -18,7 +18,12 @@ fun NavigationRoot() {
         startDestination = "home") {
 
         composable("home") { JournalHistoryScreen(navController) }
-        composable("createEntry") { CreateEntryScreen(navController) }
+//        composable("createEntry") { CreateEntryScreen(navController) }
+        composable("createEntry?filePath={filePath}") { backStackEntry ->
+            val filePath = backStackEntry.arguments?.getString("filePath")
+            CreateEntryScreen(navController, audioFilePath = filePath)
+        }
+
 
     }
 }

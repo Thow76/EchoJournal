@@ -1,5 +1,8 @@
 package com.example.echojournal.ui.screens.recordscreen
 
+import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,63 +17,81 @@ import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
-class PlaybackViewModel @Inject constructor(
-    private val player: AudioPlayer
-) : ViewModel() {
+class PlaybackViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(PlaybackUiState())
     val uiState: StateFlow<PlaybackUiState> = _uiState
 
-    private fun playRecording(file: File) {
-        try {
-            player.playFile(file)
-            _uiState.update {
-                it.copy(
-                    isPlaybackActive = true,
-                    currentFilePath = file.absolutePath,
-                    duration = player.duration()
-                )
+    private var mediaPlayer: MediaPlayer? = null
+
+    fun loadAudioFile(filePath: String) {
+        if (!verifyFileExists(filePath)) {
+            _uiState.update { it.copy(isFileLoaded = false, errorMessage = "File not found: $filePath") }
+            return
+        }
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(filePath)
+            setOnPreparedListener {
+                val fileDuration = it.duration.toLong()
+                _uiState.update { currentState ->
+                    currentState.copy(isFileLoaded = true, duration = fileDuration)
+                }
+                Log.d("PlaybackViewModel", "File loaded: $filePath with duration: $fileDuration ms")
             }
-            updatePlaybackPosition()
-        } catch (e: Exception) {
-            handleError("Error playing recording: ${e.localizedMessage}")
+            prepareAsync()
         }
     }
+
 
     fun togglePlayPause() {
-        if (_uiState.value.isPlaybackActive) {
-            stopPlayback()
-        } else {
-            _uiState.value.currentFilePath?.let { playRecording(File(it)) }
-        }
-    }
-
-    private fun stopPlayback() {
-        try {
-            player.stop()
-            _uiState.update { it.copy(isPlaybackActive = false) }
-        } catch (e: Exception) {
-            handleError("Error stopping playback: ${e.localizedMessage}")
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                _uiState.update { it.copy(isPlaybackActive = false) }
+                Log.d("PlaybackViewModel", "Playback paused.")
+            } else {
+                it.start()
+                _uiState.update { it.copy(isPlaybackActive = true) }
+                Log.d("PlaybackViewModel", "Playback started.")
+            }
         }
     }
 
     fun seekToPosition(progress: Float) {
-        val newPosition = (progress * (_uiState.value.duration ?: 0L)).toLong()
-        player.seekTo(newPosition)
-        _uiState.update { it.copy(currentPosition = newPosition) }
+        mediaPlayer?.seekTo((progress * (uiState.value.duration ?: 0L)).toInt())
+        Log.d("PlaybackViewModel", "Seeked to position: ${(progress * (uiState.value.duration ?: 0L)).toInt()}")
     }
 
-    private fun updatePlaybackPosition() {
-        viewModelScope.launch {
-            while (_uiState.value.isPlaybackActive) {
-                _uiState.update { it.copy(currentPosition = player.getCurrentPosition()) }
-                delay(100)
-            }
+    fun trackPlaybackProgress() {
+        mediaPlayer?.let { player ->
+            val handler = Handler(Looper.getMainLooper())
+            handler.post(object : Runnable {
+                override fun run() {
+                    _uiState.update { currentState ->
+                        currentState.copy(currentPosition = player.currentPosition.toLong())
+                    }
+                    if (player.isPlaying) {
+                        handler.postDelayed(this, 1000L) // Update every second
+                    }
+                }
+            })
         }
     }
 
-    private fun handleError(message: String) {
-        Log.e("PlaybackViewModel", message)
-        _uiState.update { it.copy(errorMessage = message) }
+    fun verifyFileExists(filePath: String): Boolean {
+        val file = File(filePath)
+        val exists = file.exists()
+        Log.d("PlaybackViewModel", "File exists: $exists, path: $filePath")
+        return exists
+    }
+
+
+
+    override fun onCleared() {
+        super.onCleared()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 }
+
