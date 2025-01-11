@@ -52,6 +52,7 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
                 Log.d("PlaybackViewModel", "Playback paused.")
             } else {
                 it.start()
+                trackPlaybackProgress()
                 _uiState.update { it.copy(isPlaybackActive = true) }
                 Log.d("PlaybackViewModel", "Playback started.")
             }
@@ -59,11 +60,14 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
     }
 
     fun seekToPosition(progress: Float) {
-        mediaPlayer?.seekTo((progress * (uiState.value.duration ?: 0L)).toInt())
-        Log.d("PlaybackViewModel", "Seeked to position: ${(progress * (uiState.value.duration ?: 0L)).toInt()}")
+        val newPosition = (progress * (uiState.value.duration ?: 0L)).toInt()
+        mediaPlayer?.seekTo(newPosition)
+        _uiState.update { it.copy(currentPosition = newPosition.toLong()) }
+        Log.d("PlaybackViewModel", "Seeked to position: $newPosition")
     }
 
-    fun trackPlaybackProgress() {
+
+    private fun trackPlaybackProgress() {
         mediaPlayer?.let { player ->
             val handler = Handler(Looper.getMainLooper())
             handler.post(object : Runnable {
@@ -79,7 +83,7 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun verifyFileExists(filePath: String): Boolean {
+    private fun verifyFileExists(filePath: String): Boolean {
         val file = File(filePath)
         val exists = file.exists()
         Log.d("PlaybackViewModel", "File exists: $exists, path: $filePath")
