@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.recordscreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -35,16 +36,24 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 fun CreateEntryScreen(
     navController: NavController,
     journalHistoryViewModel: JournalHistoryViewModel = hiltViewModel(),
-    playbackViewModel: PlaybackViewModel = hiltViewModel()
+    playbackViewModel: PlaybackViewModel = hiltViewModel(),
+    audioFilePath: String? = null
 ) {
     val journalUiState by journalHistoryViewModel.uiState.collectAsState()
     val playbackUiState by playbackViewModel.uiState.collectAsState()
 
-    val showMoodSheet = remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    // Debug logs
+    LaunchedEffect(audioFilePath) {
+        if (!playbackUiState.isFileLoaded && audioFilePath != null) {
+            Log.d("CreateEntryScreen", "Loading file: $audioFilePath")
+            playbackViewModel.loadAudioFile(audioFilePath)
+        }
+    }
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    Log.d(
+        "CreateEntryScreen",
+        "UI State: isFileLoaded=${playbackUiState.isFileLoaded}, duration=${playbackUiState.duration}"
+    )
 
     Box(
         modifier = Modifier
@@ -52,54 +61,37 @@ fun CreateEntryScreen(
             .background(brush = Gradients.BgSaturateGradient)
     ) {
         Scaffold(
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = { SnackbarHost(hostState = remember { SnackbarHostState() }) },
             containerColor = Color.Transparent,
-            topBar = {
-                CustomAppBar(title = "New Entry")
-            },
+            topBar = { CustomAppBar(title = "New Entry") },
         ) { paddingValues ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                playbackUiState.duration?.let {
-                    AudioPlayerBar(
-                        isPlaying = playbackUiState.isPlaybackActive,
-                        currentPosition = playbackUiState.currentPosition,
-                        duration = it,
-                        onPlayPauseClicked = { playbackViewModel.togglePlayPause() },
-                        onSeek = { progress -> playbackViewModel.seekToPosition(progress) }
+                // Show Audio Player if a file is loaded
+                if (playbackUiState.isFileLoaded) {
+                    Log.d(
+                        "CreateEntryScreen",
+                        "Displaying AudioPlayerBar with duration: ${playbackUiState.duration}"
                     )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f)
-                ) {
-                    when {
-                        journalUiState.isLoading -> LoadingIndicator()
-                        journalUiState.errorMessage != null -> ErrorSnackbar(
-                            modifier = Modifier.align(Alignment.BottomCenter),
-                            errorMessage = "Error: ${journalUiState.errorMessage}",
-                            onDismiss = journalHistoryViewModel::clearErrorMessage
-                        )
-                        journalUiState.journalEntries.isNotEmpty() -> JournalHistoryScreenList(journalEntries = journalUiState.journalEntries)
-                        else -> JournalHistoryScreenEmpty(paddingValues)
+                    playbackUiState.duration?.let { duration ->
+                        key(duration) {
+                            AudioPlayerBar(
+                                isPlaying = playbackUiState.isPlaybackActive,
+                                currentPosition = playbackUiState.currentPosition,
+                                duration = duration,
+                                onPlayPauseClicked = { playbackViewModel.togglePlayPause() },
+                                onSeek = { playbackViewModel.seekToPosition(it) },
+                                trackTitle = "Recorded Audio"
+                            )
+                        }
+
                     }
+                    // Other UI components...
                 }
             }
-        }
-    }
-
-    if (showMoodSheet.value) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showMoodSheet.value = false
-            },
-            sheetState = sheetState
-        ) {
-            MoodBottomSheet()
         }
     }
 }

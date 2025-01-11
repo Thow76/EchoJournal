@@ -77,7 +77,7 @@ class RecordingViewModel @Inject constructor(
         return try {
             recorder.stop()
             _uiState.update { it.copy(isRecording = false, isPaused = false) }
-            Log.d("RecordingViewModel", "Recording stopped.")
+            Log.d("RecordingViewModel", "Recording stopped at: ${currentOutputFile?.absolutePath}")
             currentOutputFile?.absolutePath
         } catch (e: Exception) {
             handleError("Error stopping recording: ${e.localizedMessage}")

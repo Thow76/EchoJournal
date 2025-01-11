@@ -1,5 +1,7 @@
 package com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -64,24 +66,50 @@ fun RecordBottomSheetButtons(
         ) {
             CustomGradientButton(
                 onClick = {
-                    if (uiState.isRecording && !uiState.isPaused) {
-                        navController.navigate("createEntry")
-                    } else if (uiState.isPaused) {
-                        recordingViewModel.resumeRecording()
-                    } else {
-                        recordingViewModel.stopRecording()
-                        onCloseSheet()
+                    when {
+                        uiState.isRecording && !uiState.isPaused -> {
+                            // Stop recording and navigate to the next screen
+                            val recordedFilePath: String? = recordingViewModel.stopRecording()
+                            if (recordedFilePath != null) {
+                                Log.d("RecordBottomSheetButtons", "Navigating with file path: $recordedFilePath")
+                                navController.navigate("createEntry?filePath=${Uri.encode(recordedFilePath)}")
+                                onCloseSheet()
+                            } else {
+                                Log.e("RecordBottomSheetButtons", "Failed to retrieve recorded file path.")
+                            }
+                        }
+                        uiState.isPaused -> {
+                            // Resume recording
+                            recordingViewModel.resumeRecording()
+                        }
+                        else -> {
+                            // Start a new recording
+                            recordingViewModel.startRecording()
+                        }
                     }
                 },
                 icon = {
                     Icon(
-                        imageVector = if (uiState.isPaused) Icons.Default.Mic else Icons.Default.Check,
+                        imageVector = when {
+                            uiState.isPaused -> Icons.Default.Mic
+                            uiState.isRecording -> Icons.Default.Check
+                            else -> Icons.Default.Mic
+                        },
                         tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = if (uiState.isPaused) "Resume Recording" else "Stop Recording"
+                        contentDescription = when {
+                            uiState.isPaused -> "Resume Recording"
+                            uiState.isRecording -> "Stop Recording"
+                            else -> "Start Recording"
+                        }
                     )
                 },
-                contentDescription = if (uiState.isPaused) "Resume Recording" else "Stop Recording"
+                contentDescription = when {
+                    uiState.isPaused -> "Resume Recording"
+                    uiState.isRecording -> "Stop Recording"
+                    else -> "Start Recording"
+                }
             )
+
         }
 
         // Right Button: Pause/Resume icon

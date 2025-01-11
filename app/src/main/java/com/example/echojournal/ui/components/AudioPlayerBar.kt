@@ -50,7 +50,7 @@ fun AudioPlayerBar(
             }
             Slider(
                 value = if (duration > 0) currentPosition.toFloat() / duration else 0f,
-                onValueChange = { onSeek(it) },
+                onValueChange = { progress -> onSeek(progress) },
                 modifier = Modifier.weight(1f)
             )
             Text(
@@ -61,9 +61,3 @@ fun AudioPlayerBar(
         }
     }
 }
-
-//fun formatTime(ms: Long): String {
-//    val seconds = (ms / 1000) % 60
-//    val minutes = (ms / (1000 * 60)) % 60
-//    return String.format("%02d:%02d", minutes, seconds)
-//}
