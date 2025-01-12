@@ -25,4 +25,6 @@ class JournalRepositoryImpl(
             currentEntries.filter { it.id != entryId }
         }
     }
+
+
 }
