@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 fun CustomButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    modifierIcon: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.small,
     backgroundColor: Color = MaterialTheme.colorScheme.primary,
     size: Dp? = null,
@@ -49,6 +50,7 @@ fun CustomButton(
         // 1. Icon (optional)
         if (icon != null) {
             Icon(
+                modifier = modifierIcon.size(24.dp),
                 imageVector = icon,
                 contentDescription = contentDescription,
                 tint = iconTint
