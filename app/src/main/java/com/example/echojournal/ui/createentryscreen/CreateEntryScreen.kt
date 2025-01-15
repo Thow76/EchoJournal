@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -50,7 +52,7 @@ fun CreateEntryScreen(
 
     // State to hold the text field value
     var addTitleTextFieldValue by remember { mutableStateOf("") }
-    var addTopicTextFieldValue by remember { mutableStateOf("") }
+    var addDescriptionTextFieldValue by remember { mutableStateOf("") }
 
     // For simplicity, here’s a hardcoded mutable list:
     val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
@@ -139,6 +141,26 @@ fun CreateEntryScreen(
 
                 }
                 TopicSearchAndCreate (viewModel = topicViewModel)
+                CustomTextField(
+                    value = addDescriptionTextFieldValue,
+                    onValueChange = { newValue -> addDescriptionTextFieldValue = newValue },
+                    placeholderText = "Add Description...",
+                    modifier = Modifier.padding(start = 16.dp),
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(
+                        textAlign = TextAlign.Start
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            modifier =  Modifier.size(18.dp),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Add Description",
+                            tint = MaterialColors.OutlineVariantNeutralVariant80
+                            )
+                    },
+                    placeholderColor = MaterialColors.OutlineVariantNeutralVariant80,
+                    placeholderStyle = MaterialTheme.typography.bodyLarge,
+                    containerColor = Color.Transparent
+                )
             }
         }
     }
