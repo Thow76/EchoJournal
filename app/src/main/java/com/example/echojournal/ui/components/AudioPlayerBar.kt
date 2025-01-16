@@ -34,8 +34,9 @@ fun AudioPlayerBar(
     onPlayPauseClicked: () -> Unit,
     onSeek: (Float) -> Unit,
     playbarShape: Shape = RoundedCornerShape(50.dp), // Default shape
-    playbarColor: Color = MoodColors.Stressed25, // Default color
-    sliderColor: Color = MoodColors.Stressed35 // Default color
+    iconColor: Color = MaterialTheme.colorScheme.primary, // Default color
+    playbarColor: Color = MaterialTheme.colorScheme.inversePrimary, // Default color
+    sliderColor: Color = MaterialTheme.colorScheme.inverseOnSurface // Default color
 ) {
     Column(
         modifier = Modifier
@@ -50,12 +51,14 @@ fun AudioPlayerBar(
             IconButton(
                 onClick = onPlayPauseClicked,
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.White
+                    containerColor = Color.White,
+                    contentColor = iconColor
                 )
             ) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = if (isPlaying) "Pause" else "Play")
+                    contentDescription = if (isPlaying) "Pause" else "Play",
+                    )
             }
             Slider(
                     value = if (duration > 0) currentPosition.toFloat() / duration else 0f,

@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.echojournal.ui.components.AudioPlayerBar
 import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.components.CustomTextField
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColors
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
 import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
@@ -50,22 +51,27 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //    topicViewModel: TopicViewModel = hiltViewModel(),
 //    audioFilePath: String? = null
 //) {
+//    // UI states from ViewModels
 //    val journalUiState by journalHistoryViewModel.uiState.collectAsState()
 //    val playbackUiState by playbackViewModel.uiState.collectAsState()
 //
+//    // Controls visibility of the MoodBottomSheet
 //    val showMoodSheet = remember { mutableStateOf(false) }
 //
-//    val sheetState = rememberModalBottomSheetState(
-//        skipPartiallyExpanded = true
-//    )
-//    // State to hold the text field value
+//    // Holds the mood chosen from the MoodBottomSheet
+//    var selectedMood by remember { mutableStateOf<String?>(null) }
+//
+//    // Bottom sheet state
+//    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//
+//    // Text fields
 //    var addTitleTextFieldValue by remember { mutableStateOf("") }
 //    var addDescriptionTextFieldValue by remember { mutableStateOf("") }
 //
-//    // For simplicity, here’s a hardcoded mutable list:
+//    // Topics (example usage)
 //    val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
 //
-//    // Debug logs
+//    // Load audio file if not already loaded
 //    LaunchedEffect(audioFilePath) {
 //        if (!playbackUiState.isFileLoaded && audioFilePath != null) {
 //            Log.d("CreateEntryScreen", "Loading file: $audioFilePath")
@@ -73,11 +79,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //        }
 //    }
 //
+//    // Debugging logs
 //    Log.d(
 //        "CreateEntryScreen",
 //        "UI State: isFileLoaded=${playbackUiState.isFileLoaded}, duration=${playbackUiState.duration}"
 //    )
 //
+//    // Main UI background
 //    Box(
 //        modifier = Modifier
 //            .fillMaxSize()
@@ -89,47 +97,74 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //            topBar = {
 //                CustomAppBar(
 //                    title = "New Entry",
-//                    onNavigationClick = {navController.navigateUp() }
+//                    onNavigationClick = { navController.navigateUp() }
 //                )
-//                     },
+//            }
 //        ) { paddingValues ->
+//
 //            Column(
 //                modifier = Modifier
 //                    .fillMaxSize()
 //                    .padding(paddingValues)
 //            ) {
-//               Row(modifier = Modifier
-//                   .fillMaxWidth()
-//                   .padding(start = 16.dp, end = 8.dp),
+//                // Row for mood icon/button + Title field
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(start = 16.dp, end = 8.dp),
 //                    horizontalArrangement = Arrangement.Start,
-//                   verticalAlignment = Alignment.CenterVertically
-//                   ) {
-//                   CustomGradientIconButton(
-//                       modifier = Modifier.size(32.dp),
-//                       onClick = {showMoodSheet.value = true},
-//                       icon = {
-//                           Icon(modifier = Modifier.size(24.dp),
-//                               imageVector = Icons.Default.Add,
-//                               contentDescription = "Record",
-//                               tint = Palettes.Secondary70) },
-//                        contentDescription = "Record a new entry",
-//                       buttonGradient = Gradients.BgSaturateGradient
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    // Show either the "Add Mood" button or the selected mood icon
+//                    if (selectedMood == null) {
+//                        // No mood selected yet → Show button to pick a mood
+//                        CustomGradientIconButton(
+//                            modifier = Modifier.size(32.dp),
+//                            onClick = { showMoodSheet.value = true },
+//                            icon = {
+//                                Icon(
+//                                    modifier = Modifier.size(24.dp),
+//                                    imageVector = Icons.Default.Add,
+//                                    contentDescription = "Choose Mood",
+//                                    tint = Palettes.Secondary70
+//                                )
+//                            },
+//                            contentDescription = "Choose Mood",
+//                            buttonGradient = Gradients.BgSaturateGradient
+//                        )
+//                    } else {
+//                        // A mood has been selected → Show the mood icon
+//                        Icon(
+//                            modifier = Modifier
+//                                .size(32.dp)
+//                                .clickable {
+//                                    // Optionally let user change their mood
+//                                    showMoodSheet.value = true
+//                                },
+//                            imageVector = getMoodIcon(selectedMood!!),
+//                            contentDescription = "Selected Mood",
+//                            tint = Color.Unspecified
+//                        )
+//                    }
 //
-//                   )
-//                   CustomTextField(
-//                       value = addTitleTextFieldValue,
-//                       onValueChange = { newValue -> addTitleTextFieldValue = newValue },
-//                       placeholderText = "Add Title...",
-//                       modifier = Modifier.padding(0.dp),
-//                       textStyle = MaterialTheme.typography.headlineLarge.copy(
-//                           textAlign = TextAlign.Start
-//                       ),
-//                       leadingIcon = null,
-//                       placeholderColor = MaterialColors.OutlineVariantNeutralVariant80,
-//                       containerColor = Color.Transparent
-//                   )
+//                    Spacer(modifier = Modifier.width(8.dp))
+//
+//                    // Title field
+//                    CustomTextField(
+//                        value = addTitleTextFieldValue,
+//                        onValueChange = { newValue -> addTitleTextFieldValue = newValue },
+//                        placeholderText = "Add Title...",
+//                        modifier = Modifier.padding(0.dp),
+//                        textStyle = MaterialTheme.typography.headlineLarge.copy(
+//                            textAlign = TextAlign.Start
+//                        ),
+//                        leadingIcon = null,
+//                        placeholderColor = MaterialColors.OutlineVariantNeutralVariant80,
+//                        containerColor = Color.Transparent
+//                    )
 //                }
-//                // Show Audio Player if a file is loaded
+//
+//                // Show audio player if a file is loaded
 //                if (playbackUiState.isFileLoaded) {
 //                    Log.d(
 //                        "CreateEntryScreen",
@@ -145,11 +180,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //                                onSeek = { playbackViewModel.seekToPosition(it) },
 //                            )
 //                        }
-//
 //                    }
-//
 //                }
-//                TopicSearchAndCreate (viewModel = topicViewModel)
+//
+//                // Topic search + creation UI (for example)
+//                TopicSearchAndCreate(viewModel = topicViewModel)
+//
+//                // Description field
 //                CustomTextField(
 //                    value = addDescriptionTextFieldValue,
 //                    onValueChange = { newValue -> addDescriptionTextFieldValue = newValue },
@@ -160,11 +197,11 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //                    ),
 //                    leadingIcon = {
 //                        Icon(
-//                            modifier =  Modifier.size(18.dp),
+//                            modifier = Modifier.size(18.dp),
 //                            imageVector = Icons.Default.Edit,
 //                            contentDescription = "Add Description",
 //                            tint = MaterialColors.OutlineVariantNeutralVariant80
-//                            )
+//                        )
 //                    },
 //                    placeholderColor = MaterialColors.OutlineVariantNeutralVariant80,
 //                    placeholderStyle = MaterialTheme.typography.bodyLarge,
@@ -173,16 +210,30 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 //            }
 //        }
 //    }
+//
+//    // Display the mood bottom sheet if triggered
 //    if (showMoodSheet.value) {
 //        ModalBottomSheet(
 //            onDismissRequest = { showMoodSheet.value = false },
 //            sheetState = sheetState
 //        ) {
+//            // Pass callbacks so bottom sheet can confirm/cancel selection
 //            MoodBottomSheet(
-//                moodOptions = setOf("Stressed", "Sad", "Neutral", "Peaceful", "Excited")
+//                moodOptions = setOf("Stressed", "Sad", "Neutral", "Peaceful", "Excited"),
+//                onConfirm = { chosenMood ->
+//                    // Update 'selectedMood' in parent
+//                    selectedMood = chosenMood
+//                    // Close the sheet
+//                    showMoodSheet.value = false
+//                },
+//                onCancel = {
+//                    // Optional: Clear the mood or keep the old selection
+//                    // selectedMood = null
+//                    showMoodSheet.value = false
+//                }
 //            )
 //        }
-//}
+//    }
 //}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -313,6 +364,10 @@ fun CreateEntryScreen(
                         "CreateEntryScreen",
                         "Displaying AudioPlayerBar with duration: ${playbackUiState.duration}"
                     )
+
+                    // --- Get playbarColor & sliderColor based on selected mood ---
+                    val (playbarColor, sliderColor, iconColor) = getMoodColors(selectedMood)
+
                     playbackUiState.duration?.let { duration ->
                         key(duration) {
                             AudioPlayerBar(
@@ -321,6 +376,10 @@ fun CreateEntryScreen(
                                 duration = duration,
                                 onPlayPauseClicked = { playbackViewModel.togglePlayPause() },
                                 onSeek = { playbackViewModel.seekToPosition(it) },
+                                playbarColor = playbarColor,  // pass dynamic color
+                                sliderColor = sliderColor, // pass dynamic color
+                                iconColor = iconColor
+
                             )
                         }
                     }
@@ -378,7 +437,6 @@ fun CreateEntryScreen(
         }
     }
 }
-
 
 
 
