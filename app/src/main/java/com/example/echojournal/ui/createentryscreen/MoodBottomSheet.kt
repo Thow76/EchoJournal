@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.isTraceInProgress
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,8 +36,7 @@ import com.example.echojournal.ui.theme.Palettes
 
 @Composable
 fun MoodBottomSheet(
-    required: Boolean = false,
-    moodOptions: Set<String>,
+    moodOptions: Set<String>
 ) {
     // Keep track of the currently selected mood
     var selectedMood by remember { mutableStateOf<String?>(null) }
@@ -75,11 +75,8 @@ fun MoodBottomSheet(
                 Column(
                     modifier = Modifier
                         .clickable {
-                            // Toggle selection:
-                            // If the user clicks the same mood again, you can decide:
-                            // (a) Deselect it by setting selectedMood = null, or
-                            // (b) Keep it selected. Here, we’ll keep it selected.
-                            selectedMood = mood
+                            // Toggle selection
+                            selectedMood = if (selectedMood == mood) null else mood
                         }
                         .padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -116,7 +113,11 @@ fun MoodBottomSheet(
                         brush = Gradients.BgSaturateGradient,
                         shape = RoundedCornerShape(50.dp)
                     ),
-                onClick = { /* cancel action */ },
+                onClick = {
+                    // Cancel action
+                    // Reset selectedMood if you want to
+                    selectedMood = null
+                },
                 text = "Cancel",
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
@@ -128,27 +129,45 @@ fun MoodBottomSheet(
                     .fillMaxWidth()
                     .weight(2f)
                     .background(
-                        brush = if (required) Gradients.ButtonGradient
-                        else Gradients.ButtonRequiredGradient,
+                        brush = if (selectedMood != null) {
+                            // If a mood is selected, use the "active" gradient
+                            Gradients.ButtonGradient
+                        } else {
+                            // Otherwise, show an "inactive" or "required" gradient
+                            Gradients.ButtonRequiredGradient
+                        },
                         shape = RoundedCornerShape(50.dp)
                     ),
                 onClick = {
                     // Confirm action
-                    // You can also use 'selectedMood' here if needed
+                    // You can use 'selectedMood' here
+                    if (selectedMood != null) {
+                        // Proceed with confirmation
+                        // ...
+                    } else {
+                        // Do nothing or show a warning that no mood is selected
+                    }
                 },
                 text = "Confirm",
-                textColor = if (required)
+                textColor = if (selectedMood != null) {
+                    // If selected, text is primary
                     MaterialTheme.colorScheme.onPrimary
-                else
-                    MaterialTheme.colorScheme.outline,
+                } else {
+                    // Otherwise, outline color
+                    MaterialTheme.colorScheme.outline
+                },
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
                 icon = Icons.Default.Check,
-                iconTint = if (required) Color.White
-                else MaterialTheme.colorScheme.outline
+                iconTint = if (selectedMood != null) {
+                    Color.White
+                } else {
+                    MaterialTheme.colorScheme.outline
+                }
             )
         }
     }
 }
+
 
 
