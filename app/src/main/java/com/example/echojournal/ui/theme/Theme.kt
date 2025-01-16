@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
             onSecondary = Palettes.Secondary90,
             background = MaterialColors.BackgroundNeutralVariant99,
             surface = MaterialColors.SurfacePrimary100,
-            surfaceVariant = MaterialColors.InverseOnSurfaceSecondary95,
+            surfaceVariant = MaterialColors.SurfaceVariant,
             onSurface = MaterialColors.OnSurfaceNeutralVariant10,
             error = ErrorColors.Error20,
             onError = MaterialColors.OnErrorContainer20,

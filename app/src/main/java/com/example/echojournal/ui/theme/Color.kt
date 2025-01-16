@@ -126,13 +126,22 @@ object Gradients {
         end = androidx.compose.ui.geometry.Offset.Infinite)
 
     // Button-Pressed Gradient - Primary 60 to Primary 40
-    val ButtonPressedStart = Palettes.Primary60
-    val ButtonPressedEnd = Palettes.Primary40
+    private val ButtonPressedStart = Palettes.Primary60
+    private val ButtonPressedEnd = Palettes.Primary40
 
     val ButtonPressedGradient = Brush.linearGradient(
         colors = listOf(ButtonPressedStart, ButtonPressedEnd),
         start = androidx.compose.ui.geometry.Offset.Zero,
         end = androidx.compose.ui.geometry.Offset.Infinite)
+
+    // Button-Pressed Gradient - Primary 60 to Primary 40
+    private val ButtonRequiredStart = MaterialColors.SurfaceVariant
+    private val ButtonRequiredEnd = MaterialColors.SurfaceVariant
+
+    val ButtonRequiredGradient = Brush.linearGradient(
+        colors = listOf(ButtonRequiredStart, ButtonRequiredEnd),
+        start = androidx.compose.ui.geometry.Offset.Zero,
+        end = androidx.compose.ui.geometry.Offset.Zero)
 
 
 }
