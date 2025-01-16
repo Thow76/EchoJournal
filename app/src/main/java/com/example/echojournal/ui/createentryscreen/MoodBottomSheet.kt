@@ -34,11 +34,147 @@ import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.Palettes
 
+//@Composable
+//fun MoodBottomSheet(
+//    moodOptions: Set<String>
+//) {
+//    // Keep track of the currently selected mood
+//    var selectedMood by remember { mutableStateOf<String?>(null) }
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(250.dp)
+//            .padding(16.dp),
+//        horizontalAlignment = Alignment.CenterHorizontally
+//    ) {
+//
+//        Text(
+//            text = "How are you doing?",
+//            style = MaterialTheme.typography.headlineLarge
+//        )
+//        Spacer(modifier = Modifier.height(32.dp))
+//
+//        // This Row will hold the icons and their labels
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            horizontalArrangement = Arrangement.SpaceEvenly
+//        ) {
+//            moodOptions.forEach { mood ->
+//                // Determine if this mood is selected
+//                val isSelected = (mood == selectedMood)
+//
+//                // Display filled icon if selected, otherwise outlined icon
+//                val icon = if (isSelected) {
+//                    getMoodIcon(mood)
+//                } else {
+//                    getMoodIconOutline(mood)
+//                }
+//
+//                // Icon + label in a Column
+//                Column(
+//                    modifier = Modifier
+//                        .clickable {
+//                            // Toggle selection
+//                            selectedMood = if (selectedMood == mood) null else mood
+//                        }
+//                        .padding(horizontal = 8.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    if (icon != null) {
+//                        Icon(
+//                            imageVector = icon,
+//                            contentDescription = mood,
+//                            modifier = Modifier.size(48.dp),
+//                            tint = if (isSelected) Color.Unspecified else Palettes.Secondary70
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.height(8.dp))
+//                    Text(
+//                        text = mood,
+//                        style = MaterialTheme.typography.labelMedium
+//                    )
+//                }
+//            }
+//        }
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .weight(1f),
+//            horizontalArrangement = Arrangement.Start,
+//            verticalAlignment = Alignment.Bottom
+//        ) {
+//            CustomButton(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(1f)
+//                    .background(
+//                        brush = Gradients.BgSaturateGradient,
+//                        shape = RoundedCornerShape(50.dp)
+//                    ),
+//                onClick = {
+//                    // Cancel action
+//                    // Reset selectedMood if you want to
+//                    selectedMood = null
+//                },
+//                text = "Cancel",
+//                shape = RoundedCornerShape(50.dp),
+//                backgroundColor = Color.Transparent,
+//                textColor = MaterialTheme.colorScheme.primary
+//            )
+//            Spacer(modifier = Modifier.width(16.dp))
+//            CustomButton(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .weight(2f)
+//                    .background(
+//                        brush = if (selectedMood != null) {
+//                            // If a mood is selected, use the "active" gradient
+//                            Gradients.ButtonGradient
+//                        } else {
+//                            // Otherwise, show an "inactive" or "required" gradient
+//                            Gradients.ButtonRequiredGradient
+//                        },
+//                        shape = RoundedCornerShape(50.dp)
+//                    ),
+//                onClick = {
+//                    // Confirm action
+//                    // You can use 'selectedMood' here
+//                    if (selectedMood != null) {
+//                        // Proceed with confirmation
+//                        // ...
+//                    } else {
+//                        // Do nothing or show a warning that no mood is selected
+//                    }
+//                },
+//                text = "Confirm",
+//                textColor = if (selectedMood != null) {
+//                    // If selected, text is primary
+//                    MaterialTheme.colorScheme.onPrimary
+//                } else {
+//                    // Otherwise, outline color
+//                    MaterialTheme.colorScheme.outline
+//                },
+//                shape = RoundedCornerShape(50.dp),
+//                backgroundColor = Color.Transparent,
+//                icon = Icons.Default.Check,
+//                iconTint = if (selectedMood != null) {
+//                    Color.White
+//                } else {
+//                    MaterialTheme.colorScheme.outline
+//                }
+//            )
+//        }
+//    }
+//}
+
 @Composable
 fun MoodBottomSheet(
-    moodOptions: Set<String>
+    moodOptions: Set<String>,
+    onConfirm: (String) -> Unit,
+    onCancel: () -> Unit
 ) {
-    // Keep track of the currently selected mood
     var selectedMood by remember { mutableStateOf<String?>(null) }
 
     Column(
@@ -48,35 +184,26 @@ fun MoodBottomSheet(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             text = "How are you doing?",
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        // This Row will hold the icons and their labels
+        // Mood icons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             moodOptions.forEach { mood ->
-                // Determine if this mood is selected
                 val isSelected = (mood == selectedMood)
+                val icon = if (isSelected) getMoodIcon(mood) else getMoodIconOutline(mood)
 
-                // Display filled icon if selected, otherwise outlined icon
-                val icon = if (isSelected) {
-                    getMoodIcon(mood)
-                } else {
-                    getMoodIconOutline(mood)
-                }
-
-                // Icon + label in a Column
                 Column(
                     modifier = Modifier
                         .clickable {
                             // Toggle selection
-                            selectedMood = if (selectedMood == mood) null else mood
+                            selectedMood = if (isSelected) null else mood
                         }
                         .padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -98,6 +225,7 @@ fun MoodBottomSheet(
             }
         }
 
+        // Buttons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,46 +242,41 @@ fun MoodBottomSheet(
                         shape = RoundedCornerShape(50.dp)
                     ),
                 onClick = {
-                    // Cancel action
-                    // Reset selectedMood if you want to
-                    selectedMood = null
+                    // Cancel action -> use parent callback
+                    onCancel()
                 },
                 text = "Cancel",
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
                 textColor = MaterialTheme.colorScheme.primary
             )
+
             Spacer(modifier = Modifier.width(16.dp))
+
             CustomButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(2f)
                     .background(
                         brush = if (selectedMood != null) {
-                            // If a mood is selected, use the "active" gradient
                             Gradients.ButtonGradient
                         } else {
-                            // Otherwise, show an "inactive" or "required" gradient
                             Gradients.ButtonRequiredGradient
                         },
                         shape = RoundedCornerShape(50.dp)
                     ),
                 onClick = {
-                    // Confirm action
-                    // You can use 'selectedMood' here
+                    // Only confirm if a mood is selected
                     if (selectedMood != null) {
-                        // Proceed with confirmation
-                        // ...
+                        onConfirm(selectedMood!!)
                     } else {
-                        // Do nothing or show a warning that no mood is selected
+                        // Possibly show a warning or do nothing
                     }
                 },
                 text = "Confirm",
                 textColor = if (selectedMood != null) {
-                    // If selected, text is primary
                     MaterialTheme.colorScheme.onPrimary
                 } else {
-                    // Otherwise, outline color
                     MaterialTheme.colorScheme.outline
                 },
                 shape = RoundedCornerShape(50.dp),
