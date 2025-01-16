@@ -19,14 +19,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomButton
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIconOutline
 import com.example.echojournal.ui.theme.Gradients
-import com.example.echojournal.ui.theme.MaterialColors
 import com.example.echojournal.ui.theme.Palettes
 
 @Composable
@@ -34,6 +38,9 @@ fun MoodBottomSheet(
     required: Boolean = false,
     moodOptions: Set<String>,
 ) {
+    // Keep track of the currently selected mood
+    var selectedMood by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -54,12 +61,26 @@ fun MoodBottomSheet(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             moodOptions.forEach { mood ->
-                val icon = getMoodIconOutline(mood)
+                // Determine if this mood is selected
+                val isSelected = (mood == selectedMood)
 
-                // Place each icon and its label in a Column
+                // Display filled icon if selected, otherwise outlined icon
+                val icon = if (isSelected) {
+                    getMoodIcon(mood)
+                } else {
+                    getMoodIconOutline(mood)
+                }
+
+                // Icon + label in a Column
                 Column(
                     modifier = Modifier
-                        .clickable { /* Handle icon click here */ }
+                        .clickable {
+                            // Toggle selection:
+                            // If the user clicks the same mood again, you can decide:
+                            // (a) Deselect it by setting selectedMood = null, or
+                            // (b) Keep it selected. Here, we’ll keep it selected.
+                            selectedMood = mood
+                        }
                         .padding(horizontal = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -68,7 +89,7 @@ fun MoodBottomSheet(
                             imageVector = icon,
                             contentDescription = mood,
                             modifier = Modifier.size(48.dp),
-                            tint = Palettes.Secondary70
+                            tint = if (isSelected) Color.Unspecified else Palettes.Secondary70
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -111,7 +132,10 @@ fun MoodBottomSheet(
                         else Gradients.ButtonRequiredGradient,
                         shape = RoundedCornerShape(50.dp)
                     ),
-                onClick = { /* confirm action */ },
+                onClick = {
+                    // Confirm action
+                    // You can also use 'selectedMood' here if needed
+                },
                 text = "Confirm",
                 textColor = if (required)
                     MaterialTheme.colorScheme.onPrimary
@@ -126,4 +150,5 @@ fun MoodBottomSheet(
         }
     }
 }
+
 
