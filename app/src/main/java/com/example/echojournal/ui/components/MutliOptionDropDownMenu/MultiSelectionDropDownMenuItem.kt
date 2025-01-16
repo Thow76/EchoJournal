@@ -41,7 +41,7 @@ fun MultiSelectDropdownMenuItem(
                     .padding(8.dp)
             ) {
                 // Leading icon
-                getMoodIconForDropDown(option)?.let { icon ->
+                getMoodIcon(option)?.let { icon ->
                     Icon(
                         imageVector = icon,
                         contentDescription = null,

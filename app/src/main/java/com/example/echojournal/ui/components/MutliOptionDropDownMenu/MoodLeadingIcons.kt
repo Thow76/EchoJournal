@@ -15,7 +15,7 @@ fun MoodsLeadingIcons(selectedOptions: List<String>) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         selectedOptions.take(2).forEach { option ->
-            getMoodIconForDropDown(option)?.let { icon ->
+            getMoodIcon(option)?.let { icon ->
                 Icon(
                     imageVector = icon,
                     tint = Color.Unspecified,
