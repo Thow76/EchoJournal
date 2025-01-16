@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomButton
-import com.example.echojournal.ui.components.CustomGradientButton
+import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 import com.example.echojournal.ui.theme.MaterialColors
 import androidx.compose.material.icons.filled.Mic
@@ -64,7 +64,7 @@ fun RecordBottomSheetButtons(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(64.dp) // Larger size to accommodate ripple
         ) {
-            CustomGradientButton(
+            CustomGradientIconButton(
                 onClick = {
                     when {
                         uiState.isRecording && !uiState.isPaused -> {

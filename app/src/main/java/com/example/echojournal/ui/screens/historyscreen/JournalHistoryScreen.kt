@@ -15,7 +15,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,12 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
-import com.example.echojournal.ui.components.CustomGradientButton
+import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.components.LoadingIndicator
 import com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent.RecordSheetContent
 import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
@@ -38,7 +36,6 @@ import com.example.echojournal.ui.theme.Gradients
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import com.example.echojournal.ui.components.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
@@ -99,7 +96,7 @@ fun JournalHistoryScreen(
                     onNavigationClick = {})
             },
             floatingActionButton = {
-                CustomGradientButton(
+                CustomGradientIconButton(
                     onClick = {
                         coroutineScope.launch {
                             if (recordAudioPermissionState.status != PermissionStatus.Granted) {
@@ -199,6 +196,7 @@ fun JournalHistoryScreen(
             )
         }
     }
+
 }
 
 

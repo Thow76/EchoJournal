@@ -17,12 +17,12 @@ import androidx.compose.ui.semantics.semantics
 import com.example.echojournal.ui.theme.Gradients
 
 @Composable
-fun CustomGradientButton(
+fun CustomGradientIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     icon: @Composable () -> Unit,
     contentDescription: String,
-    buttonGradient: Brush = Gradients.ButtonGradient
+    buttonGradient: Brush = Gradients.ButtonGradient,
 ) {
     Box(
         modifier = modifier
