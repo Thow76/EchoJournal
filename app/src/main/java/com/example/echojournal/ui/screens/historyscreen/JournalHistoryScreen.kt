@@ -67,6 +67,11 @@ fun JournalHistoryScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
+    // Trigger loading entries when the screen is displayed
+    LaunchedEffect(Unit) {
+        journalHistoryViewModel.loadJournalEntries()
+    }
+
     // LaunchedEffect to handle permission grant when recording is requested
     LaunchedEffect(recordAudioPermissionState.status) {
         if (recordAudioPermissionState.status == PermissionStatus.Granted && isRecordingRequested.value) {

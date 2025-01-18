@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.data.JournalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -52,7 +54,7 @@ class JournalHistoryViewModel @Inject constructor(
 //                val newEntries = journalEntries
 //                // We store the new “raw” list
 //                _uiState.value = _uiState.value.copy(
-//                    allEntries = newEntries,
+//                    allEntries = uiState.value.allEntries,
 //                    isLoading = false,
 //                    errorMessage = null)
 //                // Then filter them
@@ -64,8 +66,39 @@ class JournalHistoryViewModel @Inject constructor(
 //            )
 //        }
 //    }
-
+//
 //    }
+
+    fun loadJournalEntries() {
+        viewModelScope.launch {
+            try {
+                // Update UI state to indicate loading
+                _uiState.value = _uiState.value.copy(isLoading = true)
+
+                // Collect journal entries from the repository
+                val entries = repository.getAllJournalEntries().firstOrNull() ?: emptyList()
+
+                // Update UI state with all entries
+                _uiState.value = _uiState.value.copy(
+                    allEntries = entries,
+                    isLoading = false,
+                    errorMessage = null
+                )
+
+                // Apply any active filters
+                applyFilters()
+            } catch (e: Exception) {
+                // Handle errors and update UI state
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Failed to load journal entries: ${e.message}"
+                )
+            }
+        }
+    }
+
+
+
 
     fun isExpanded(id: Int): Boolean {
         return expandedStates[id] ?: false
@@ -107,6 +140,17 @@ class JournalHistoryViewModel @Inject constructor(
         _selectedTopics.value = emptySet()
         applyFilters()
     }
+
+//    private fun applyFilters() {
+//        val all = _uiState.value.allEntries
+//        val filtered = all.filter { entry ->
+//            (_selectedMoods.value.isEmpty() || entry.mood in _selectedMoods.value) &&
+//                    (_selectedTopics.value.isEmpty() ||
+//                            _selectedTopics.value.any { topic -> entry.title.contains(topic, ignoreCase = true) })
+//        }
+//
+//        _uiState.value = _uiState.value.copy(journalEntries = filtered)
+//    }
 
     private fun applyFilters() {
         val all = _uiState.value.allEntries
