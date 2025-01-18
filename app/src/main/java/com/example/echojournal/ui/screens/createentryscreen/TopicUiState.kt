@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.createentryscreen
+package com.example.echojournal.ui.screens.createentryscreen
 
 data class TopicUiState(
     val searchQuery: String = "",

@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.createentryscreen
+package com.example.echojournal.ui.screens.createentryscreen
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,7 +40,6 @@ import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColo
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
 import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
-import com.example.echojournal.ui.components.TopicSearchAndCreate
 import com.example.echojournal.ui.theme.MaterialColors
 import com.example.echojournal.ui.theme.Palettes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi

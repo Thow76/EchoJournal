@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryScreen
-import com.example.echojournal.ui.createentryscreen.CreateEntryScreen
+import com.example.echojournal.ui.screens.createentryscreen.CreateEntryScreen
 
 @Composable
 fun NavigationRoot() {
