@@ -3,6 +3,7 @@ package com.example.echojournal.ui.createentryscreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -10,59 +11,117 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TopicViewModel @Inject constructor() : ViewModel() {
 
-    private val _allTopics = MutableStateFlow(listOf("Android", "Compose", "Kotlin"))
-    // Exposed read-only for outside
-    val allTopics: StateFlow<List<String>> = _allTopics.asStateFlow()
+    // Initialize the UI state with default values
+    private val _uiState = MutableStateFlow(TopicUiState())
+    val uiState: StateFlow<TopicUiState> = _uiState.asStateFlow()
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+    init {
+        // Observe changes to searchQuery and allTopics to update filteredTopics and showSuggestions
+        viewModelScope.launch {
+            _uiState
+                .map { it.searchQuery }
+                .combine(_uiState.map { it.allTopics }) { query, topics ->
+                    val filtered = if (query.isBlank()) {
+                        emptyList()
+                    } else {
+                        topics.filter { it.contains(query, ignoreCase = true) }
+                    }
+                    // Remove the "val show = query.isNotBlank()" line
 
-    // We can decide to show suggestions if query is not blank
-    val showSuggestions = searchQuery.map { it.isNotBlank() }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            false
-        )
-
-    // Filter topics whenever _searchQuery or _allTopics change
-    val filteredTopics = combine(_searchQuery, _allTopics) { query, topics ->
-        // If the query is blank, return an empty list
-        // (or all topics if you prefer)
-        if (query.isBlank()) {
-            emptyList()
-        } else {
-            topics.filter { it.contains(query, ignoreCase = true) }
+                    // Just return the filtered list, and let the UI or other events decide
+                    filtered
+                }
+                .collect { filteredTopics ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            filteredTopics = filteredTopics,
+                            // Do not override showSuggestions here
+                            // Let your manual calls control it
+                        )
+                    }
+                }
         }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        emptyList()
-    )
-
-    // Callback from UI
-    fun onSearchTextChange(newQuery: String) {
-        _searchQuery.value = newQuery
     }
+
+    /**
+     * Updates the search query in the UI state.
+     * Triggers the recomputation of filteredTopics and showSuggestions via the init block.
+     */
+    fun onSearchTextChange(newQuery: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchQuery = newQuery,
+                // Show only if new query is not blank
+                showSuggestions = newQuery.isNotBlank(),
+                errorMessage = null
+            )
+        }
+    }
+
+    /**
+     * Handles the selection of a topic.
+     * Sets the search query to the selected topic and hides suggestions.
+     */
 
     fun onTopicSelected(selected: String) {
-        // Possibly do something else
-        _searchQuery.value = selected
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchQuery = selected,
+                showSuggestions = false
+            )
+        }
     }
 
+
+    /**
+     * Initiates the creation of a new topic based on the current search query.
+     * Adds the new topic to allTopics if it doesn't already exist.
+     * Handles loading and error states appropriately.
+     */
     fun onCreateTopic() {
-        val query = _searchQuery.value
-        if (query.isNotBlank()) {
-            // Add to the list if not present
-            val updated = _allTopics.value.toMutableList().apply {
-                add(query)
+        val query = _uiState.value.searchQuery.trim()
+        if (query.isBlank()) {
+            _uiState.update { it.copy(errorMessage = "Topic name cannot be empty.") }
+            return
+        }
+
+        // Check if the topic already exists (case-insensitive)
+        val exists = _uiState.value.allTopics.any { it.equals(query, ignoreCase = true) }
+        if (exists) {
+            _uiState.update { it.copy(errorMessage = "Topic already exists.") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isCreating = true, errorMessage = null) }
+
+            try {
+                // Simulate a network/database operation with a delay
+                // Replace this with actual creation logic as needed
+                kotlinx.coroutines.delay(1000)
+
+                // Update the list of all topics
+                val updatedTopics = _uiState.value.allTopics + query
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        allTopics = updatedTopics,
+                        searchQuery = query,
+                        isCreating = false,
+                        showSuggestions = false
+                    )
+                }
+            } catch (e: Exception) {
+                // Handle any errors that occur during creation
+                _uiState.update { it.copy(isCreating = false, errorMessage = "Failed to create topic.") }
             }
-            _allTopics.value = updated
         }
     }
 }
+
