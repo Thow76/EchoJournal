@@ -30,7 +30,8 @@ fun CustomButton(
     iconTint: Color = LocalContentColor.current.copy(alpha = LocalContentColor.current.alpha),
     contentDescription: String? = null,
     text: String? = null,
-    textColor: Color = Color.White
+    textColor: Color = Color.White,
+    enabled: Boolean?
 ) {
     // If a size is provided, apply it to the Modifier
     val buttonModifier = if (size != null) {
@@ -45,7 +46,8 @@ fun CustomButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor),
         contentPadding = PaddingValues(8.dp),
-        modifier = buttonModifier
+        modifier = buttonModifier,
+        enabled = enabled ?: true
     ) {
         // 1. Icon (optional)
         if (icon != null) {

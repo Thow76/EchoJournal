@@ -56,7 +56,8 @@ fun RecordBottomSheetButtons(
             shape = CircleShape,
             iconTint = MaterialTheme.colorScheme.error,
             backgroundColor = MaterialColors.ErrorContainer95,
-            contentDescription = "Cancel Recording"
+            contentDescription = "Cancel Recording",
+            enabled = null
         )
 
         // Center Button: Check or Microphone icon
@@ -127,7 +128,8 @@ fun RecordBottomSheetButtons(
             shape = CircleShape,
             iconTint = MaterialTheme.colorScheme.primary,
             backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentDescription = if (uiState.isPaused) "Resume Recording" else "Pause Recording"
+            contentDescription = if (uiState.isPaused) "Resume Recording" else "Pause Recording",
+            enabled = null
         )
     }
 }

@@ -246,7 +246,8 @@ fun MoodBottomSheet(
                 text = "Cancel",
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
-                textColor = MaterialTheme.colorScheme.primary
+                textColor = MaterialTheme.colorScheme.primary,
+                enabled = null
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -277,6 +278,7 @@ fun MoodBottomSheet(
                 } else {
                     MaterialTheme.colorScheme.outline
                 },
+                enabled = null,
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
                 icon = Icons.Default.Check,

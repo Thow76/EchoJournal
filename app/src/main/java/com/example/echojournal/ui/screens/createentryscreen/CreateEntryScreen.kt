@@ -32,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.theme.Gradients
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.AudioPlayerBar
 import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.components.CustomGradientIconButton
@@ -43,6 +44,9 @@ import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
 import com.example.echojournal.ui.theme.MaterialColors
 import com.example.echojournal.ui.theme.Palettes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -72,6 +76,20 @@ fun CreateEntryScreen(
 
     // Topics (example usage)
     val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
+
+    val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+
+    val now = Date()
+    val date = dateFormat.format(now)
+    val timeStamp = timeFormat.format(now)
+
+    val generateEntryId = (0..999999999).random()
+
+    val isSaveEnabled by remember {
+        derivedStateOf { selectedMood != null && addTitleTextFieldValue.isNotBlank() }
+    }
+
 
     // Load audio file if not already loaded
     LaunchedEffect(audioFilePath) {
@@ -126,7 +144,8 @@ fun CreateEntryScreen(
                         text = "Cancel",
                         shape = RoundedCornerShape(50.dp),
                         backgroundColor = Color.Transparent,
-                        textColor = MaterialTheme.colorScheme.primary
+                        textColor = MaterialTheme.colorScheme.primary,
+                        enabled = null
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -137,7 +156,7 @@ fun CreateEntryScreen(
                             .padding(end = 16.dp)
                             .weight(2f)
                             .background(
-                                brush = if (selectedMood != null) {
+                                brush = if (isSaveEnabled) {
                                     Gradients.ButtonGradient
                                 } else {
                                     Gradients.ButtonRequiredGradient
@@ -145,22 +164,41 @@ fun CreateEntryScreen(
                                 shape = RoundedCornerShape(50.dp)
                             ),
                         onClick = {
-//                            // Only confirm if a mood is selected
-//                            if (selectedMood != null) {
-//                                onConfirm(selectedMood!!)
-//                            } else {
-//                                // Possibly show a warning or do nothing
-//                            }
+                            if (!isSaveEnabled) {
+                                // Optionally show a Toast/Snackbar or just log
+                                Log.w("CreateEntryScreen", "Title and Mood are required!")
+                                return@CustomButton
+                            }
+
+                            // 4) Construct the new JournalEntry
+                            val newEntry = JournalEntry(
+                                id = generateEntryId,
+                                iconResId = null,
+                                title = addTitleTextFieldValue,
+                                date = date,
+                                timeStamp = timeStamp,
+                                mood = selectedMood!!,
+                                description = addDescriptionTextFieldValue,
+                                audioFilePath = audioFilePath
+                                // If you also store audio paths, include that here.
+                            )
+
+                            // 5) Insert into DataStore via ViewModel
+                            journalHistoryViewModel.addJournalEntry(newEntry)
+
+                            // 6) Navigate back or wherever you wish
+                            navController.navigateUp()
                         },
                         text = "Save",
-                        textColor = if (selectedMood != null) {
+                        enabled = isSaveEnabled,
+                        textColor = if (isSaveEnabled) {
                             MaterialTheme.colorScheme.onPrimary
                         } else {
                             MaterialTheme.colorScheme.outline
                         },
                         shape = RoundedCornerShape(50.dp),
                         backgroundColor = Color.Transparent,
-                        iconTint = if (selectedMood != null) {
+                        iconTint = if (isSaveEnabled) {
                             Color.White
                         } else {
                             MaterialTheme.colorScheme.outline
