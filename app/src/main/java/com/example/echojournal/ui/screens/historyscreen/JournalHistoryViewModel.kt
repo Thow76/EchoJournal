@@ -46,28 +46,6 @@ class JournalHistoryViewModel @Inject constructor(
             repository.removeJournalEntry(entryId)
         }
     }
-//    fun loadJournalEntries() {
-//        viewModelScope.launch {
-//            try {
-//                _uiState.value = _uiState.value.copy(isLoading = true)
-//                delay(1000) // Simulate loading delay
-//                val newEntries = journalEntries
-//                // We store the new “raw” list
-//                _uiState.value = _uiState.value.copy(
-//                    allEntries = uiState.value.allEntries,
-//                    isLoading = false,
-//                    errorMessage = null)
-//                // Then filter them
-//                applyFilters()
-//        } catch (e: Exception) {
-//            _uiState.value = _uiState.value.copy(
-//                isLoading = false,
-//                errorMessage = "Failed to load journal entries: ${e.message}"
-//            )
-//        }
-//    }
-//
-//    }
 
     fun loadJournalEntries() {
         viewModelScope.launch {
@@ -140,17 +118,6 @@ class JournalHistoryViewModel @Inject constructor(
         _selectedTopics.value = emptySet()
         applyFilters()
     }
-
-//    private fun applyFilters() {
-//        val all = _uiState.value.allEntries
-//        val filtered = all.filter { entry ->
-//            (_selectedMoods.value.isEmpty() || entry.mood in _selectedMoods.value) &&
-//                    (_selectedTopics.value.isEmpty() ||
-//                            _selectedTopics.value.any { topic -> entry.title.contains(topic, ignoreCase = true) })
-//        }
-//
-//        _uiState.value = _uiState.value.copy(journalEntries = filtered)
-//    }
 
     private fun applyFilters() {
         val all = _uiState.value.allEntries

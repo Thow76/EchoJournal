@@ -77,8 +77,8 @@ fun CreateEntryScreen(
     // Topics (example usage)
     val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
 
-    val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
-    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     val now = Date()
     val date = dateFormat.format(now)
