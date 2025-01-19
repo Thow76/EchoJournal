@@ -14,13 +14,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.theme.Gradients
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun JournalHistoryScreenList(journalEntries: List<JournalEntry>) {
-    val todayEntries = journalEntries.filter { it.date == "Today" }
-    val yesterdayEntries = journalEntries.filter { it.date == "Yesterday" }
+    // Define the date format matching the format of `it.date`
+    val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+
+    val calendar = Calendar.getInstance()
+    calendar.add(Calendar.DATE, -1) // Subtract one day
+    val yesterday = dateFormat.format(calendar.time)
+
+// Get the formatted current date as a string
+    val today = dateFormat.format(Date())
+    val todayEntries = journalEntries.filter { it.date == today }
+    val yesterdayEntries = journalEntries.filter { it.date == yesterday }
     // We’ll group the other entries by their date
-    val otherEntries = journalEntries.filterNot { it.date == "Today" || it.date == "Yesterday" }
+    val otherEntries = journalEntries.filterNot { it.date == today || it.date == yesterday }
     val groupedOtherEntries = otherEntries.groupBy { it.date }
 
     Box(
