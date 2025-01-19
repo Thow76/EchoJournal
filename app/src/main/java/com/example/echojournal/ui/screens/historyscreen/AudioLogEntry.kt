@@ -21,13 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.theme.MoodColors
 
 @Composable
@@ -80,7 +83,7 @@ fun AudioLogEntry(
                 // Left section: Icon + Title
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        painter = painterResource(id = entry.iconResId ?: R.drawable.ic_launcher_foreground),
+                        imageVector = getMoodIcon(entry.mood),
                         contentDescription = null,
                         tint = Color.Unspecified
                     )

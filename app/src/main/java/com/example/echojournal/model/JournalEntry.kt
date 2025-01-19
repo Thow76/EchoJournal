@@ -5,7 +5,6 @@ import kotlinx.serialization.*
 @Serializable
 data class JournalEntry(
     val id: Int,
-    val iconResId: Int? = null,
     val title: String,
     val date: String,
     val timeStamp: String,

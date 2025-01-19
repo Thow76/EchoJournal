@@ -73,7 +73,7 @@ fun CreateEntryScreen(
     // Text fields
     var addTitleTextFieldValue by remember { mutableStateOf("") }
     var addDescriptionTextFieldValue by remember { mutableStateOf("") }
-
+    
     // Topics (example usage)
     val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
 
@@ -173,7 +173,6 @@ fun CreateEntryScreen(
                             // 4) Construct the new JournalEntry
                             val newEntry = JournalEntry(
                                 id = generateEntryId,
-                                iconResId = null,
                                 title = addTitleTextFieldValue,
                                 date = date,
                                 timeStamp = timeStamp,
