@@ -75,7 +75,8 @@ fun CreateEntryScreen(
     var addDescriptionTextFieldValue by remember { mutableStateOf("") }
     
     // Topics (example usage)
-    val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
+    // val topics = remember { mutableStateListOf("Android", "Compose", "Kotlin") }
+    var selectedTopic by remember { mutableStateOf<String?>(null) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -178,6 +179,7 @@ fun CreateEntryScreen(
                                 timeStamp = timeStamp,
                                 mood = selectedMood!!,
                                 description = addDescriptionTextFieldValue,
+                                topic = selectedTopic,
                                 audioFilePath = audioFilePath
                                 // If you also store audio paths, include that here.
                             )
@@ -295,7 +297,10 @@ fun CreateEntryScreen(
                     }
                 }
                 // Topic search + creation UI (for example)
-                TopicSearchAndCreate(viewModel = topicViewModel)
+                TopicSearchAndCreate(viewModel = topicViewModel,
+                    onTopicPicked = { topic ->
+                        selectedTopic = topic
+                    })
                 // Description field
                 CustomTextField(
                     value = addDescriptionTextFieldValue,

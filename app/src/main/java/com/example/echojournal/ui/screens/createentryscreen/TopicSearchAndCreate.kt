@@ -126,7 +126,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopicSearchAndCreate(
-    viewModel: TopicViewModel = hiltViewModel()
+    viewModel: TopicViewModel = hiltViewModel(),
+    onTopicPicked: (String) -> Unit
 ) {
     // Collect the entire UI state from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
@@ -147,8 +148,19 @@ fun TopicSearchAndCreate(
             SuggestionsDropdown(
                 topics = uiState.filteredTopics,
                 query = uiState.searchQuery,
-                onTopicSelected = viewModel::onTopicSelected,
-                onCreateTopic = viewModel::onCreateTopic
+                onTopicSelected = { topic ->
+                    viewModel.onTopicSelected(topic)
+                    // Also update parent’s local state:
+                    onTopicPicked(topic)
+                },
+                onCreateTopic = {
+                    viewModel.onCreateTopic()
+                    // The newly created topic is essentially uiState.searchQuery
+                    // after onCreateTopic() finishes, but if you want immediate
+                    // feedback, you can do:
+                    val newTopic = viewModel.uiState.value.searchQuery
+                    onTopicPicked(newTopic)
+                }
             )
         }
 

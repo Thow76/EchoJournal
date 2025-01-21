@@ -498,6 +498,12 @@ fun AudioLogEntry(entry: JournalEntry,
                 }
             }
 
+            Text(
+                text = entry.topic ?: "",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
 
             // Display short or full description depending on isExpanded

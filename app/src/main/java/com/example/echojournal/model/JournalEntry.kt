@@ -10,6 +10,7 @@ data class JournalEntry(
     val timeStamp: String,
     val mood: String,
     val description: String,
+    val topic: String? = null,
     val audioFilePath: String? = null
 
 )
