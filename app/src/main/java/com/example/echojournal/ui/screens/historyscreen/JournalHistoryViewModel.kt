@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.historyscreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,15 +38,37 @@ class JournalHistoryViewModel @Inject constructor(
 
     fun addJournalEntry(entry: JournalEntry) {
         viewModelScope.launch {
-            repository.addJournalEntry(entry)
+            try {
+                repository.addJournalEntry(entry)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = "Failed to add journal entry: ${e.message}"
+                )
+            }
         }
     }
 
-    fun removeJournalEntry(entryId: Int) {
-        viewModelScope.launch {
-            repository.removeJournalEntry(entryId)
-        }
-    }
+
+//    fun removeJournalEntry(entryId: Int) {
+//        viewModelScope.launch {
+//            repository.removeJournalEntry(entryId)
+//            expandedStates.value = expandedStates.value.toMutableMap().apply {
+//                remove(entryId)
+//            }
+//        }
+//    }
+//
+//
+//    private fun initializeExpandedStates(entries: List<JournalEntry>) {
+//        _expandedStates.value = _expandedStates.value.toMutableMap().apply {
+//            entries.forEach { entry ->
+//                if (!containsKey(entry.id)) {
+//                    this[entry.id] = false
+//                }
+//            }
+//        }
+//    }
+
 
     fun loadJournalEntries() {
         viewModelScope.launch {
@@ -55,6 +78,8 @@ class JournalHistoryViewModel @Inject constructor(
 
                 // Collect journal entries from the repository
                 val entries = repository.getAllJournalEntries().firstOrNull() ?: emptyList()
+
+               // initializeExpandedStates(entries)
 
                 // Update UI state with all entries
                 _uiState.value = _uiState.value.copy(
@@ -85,7 +110,6 @@ class JournalHistoryViewModel @Inject constructor(
     fun toggleExpanded(id: Int) {
         expandedStates[id] = !(expandedStates[id] ?: false)
     }
-
 
     fun addMoodFilter(mood: String) {
         _selectedMoods.value = _selectedMoods.value + mood
