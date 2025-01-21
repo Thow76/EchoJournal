@@ -10,16 +10,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.MultiSelectDropdownMenu
+import com.example.echojournal.ui.screens.createentryscreen.TopicViewModel
 
 
 @Composable
 fun FilterSection(
     viewModel: JournalHistoryViewModel = viewModel(),
+    topicViewModel: TopicViewModel = hiltViewModel()
 ) {
     val selectedMoods by viewModel.selectedMoods.collectAsState()
     val selectedTopics by viewModel.selectedTopics.collectAsState()
+
+    // Get topics from the TopicViewModel UI state
+    val topicUiState by topicViewModel.uiState.collectAsState()
+    val storedTopics = topicUiState.allTopics
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -38,7 +46,7 @@ fun FilterSection(
 
         MultiSelectDropdownMenu(
             label = "Topics",
-            options = listOf("Work", "Friends", "Family", "Love", "Surprise").sortedBy { (it.first()) },
+            options = storedTopics.sortedBy { it.first() },
             selectedOptions = selectedTopics,
             onOptionSelected = { chosen -> viewModel.addTopicFilter(chosen) },
             onOptionDeselected = { chosen -> viewModel.removeTopicFilter(chosen) },
