@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -48,6 +51,7 @@ import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.AudioPlayerBar
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
+import com.example.echojournal.ui.screens.createentryscreen.TopicChip
 import com.example.echojournal.ui.theme.MoodColors
 
 //@Composable
@@ -553,14 +557,23 @@ fun TopicsRow(topics: List<String>) {
         // Add horizontal spacing, adjust as you wish
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         // Optionally fill the width or wrap content
-        modifier = Modifier.wrapContentWidth()
+        modifier = Modifier.wrapContentWidth().padding(top = 8.dp, start = 8.dp)
     ) {
         topics.forEach { topic ->
-            Text(
-                text = topic,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Row(modifier = Modifier.padding(4.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Tag,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(12.dp)
+                )
+                Text(
+                    text = topic,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }

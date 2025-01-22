@@ -1,5 +1,6 @@
 package com.example.echojournal.ui.screens.createentryscreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,15 +20,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.theme.MaterialColors
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.hilt.navigation.compose.hiltViewModel
 
 //
@@ -124,62 +134,114 @@ import androidx.hilt.navigation.compose.hiltViewModel
 //}
 
 @OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun TopicSearchAndCreate(
+//    viewModel: TopicViewModel = hiltViewModel(),
+//    onTopicPicked: (String) -> Unit
+//) {
+//    // Collect the entire UI state from the ViewModel
+//    val uiState by viewModel.uiState.collectAsState()
+//
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(horizontal = 8.dp)
+//    ) {
+//        // Search TextField
+//        TopicSearchTextField(
+//            query = uiState.searchQuery,
+//            onQueryChange = viewModel::onSearchTextChange
+//        )
+//
+//        // Suggestions Dropdown
+//        if (uiState.showSuggestions) {
+//            SuggestionsDropdown(
+//                topics = uiState.filteredTopics,
+//                query = uiState.searchQuery,
+//                onTopicSelected = { topic ->
+//                    viewModel.onTopicSelected(topic)
+//                    // Also update parent’s local state:
+//                    onTopicPicked(topic)
+//                },
+//                onCreateTopic = {
+//                    viewModel.onCreateTopic()
+//                    // The newly created topic is essentially uiState.searchQuery
+//                    // after onCreateTopic() finishes, but if you want immediate
+//                    // feedback, you can do:
+//                    val newTopic = viewModel.uiState.value.searchQuery
+//                    onTopicPicked(newTopic)
+//                }
+//            )
+//        }
+//
+//        // Optional: Handle loading, error, or creation states
+//        uiState.isCreating?.let { isCreating ->
+//            if (isCreating) {
+//                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+//            }
+//        }
+//
+//        uiState.errorMessage?.let { errorMessage ->
+//            Text(
+//                text = errorMessage,
+//                color = MaterialTheme.colorScheme.error,
+//                modifier = Modifier.padding(top = 8.dp)
+//            )
+//        }
+//    }
+//}
+
 @Composable
 fun TopicSearchAndCreate(
     viewModel: TopicViewModel = hiltViewModel(),
-    onTopicPicked: (String) -> Unit
+    selectedTopics: List<String>,
+    onSelectedTopicsChange: (List<String>) -> Unit
 ) {
-    // Collect the entire UI state from the ViewModel
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-    ) {
-        // Search TextField
-        TopicSearchTextField(
+    Column {
+        // 1) Where we track or display the user’s topics
+        MultiTopicSelectionRow(
             query = uiState.searchQuery,
-            onQueryChange = viewModel::onSearchTextChange
+            onQueryChange = viewModel::onSearchTextChange,
+            selectedTopics = selectedTopics,
+            onTopicSelectedOrCreated = { topic ->
+                // Add new topic to parent's list
+                onSelectedTopicsChange(selectedTopics + topic)
+                // Reset text field
+                viewModel.onSearchTextChange("")
+            },
+            onTopicRemove = { topicToRemove ->
+                onSelectedTopicsChange(selectedTopics - topicToRemove)
+            }
         )
 
-        // Suggestions Dropdown
+        // 2) Suggestions
         if (uiState.showSuggestions) {
             SuggestionsDropdown(
                 topics = uiState.filteredTopics,
                 query = uiState.searchQuery,
                 onTopicSelected = { topic ->
-                    viewModel.onTopicSelected(topic)
-                    // Also update parent’s local state:
-                    onTopicPicked(topic)
+                    onSelectedTopicsChange(selectedTopics + topic)
+                    viewModel.onSearchTextChange("")
                 },
                 onCreateTopic = {
                     viewModel.onCreateTopic()
-                    // The newly created topic is essentially uiState.searchQuery
-                    // after onCreateTopic() finishes, but if you want immediate
-                    // feedback, you can do:
-                    val newTopic = viewModel.uiState.value.searchQuery
-                    onTopicPicked(newTopic)
+                    // After creation, the new topic is basically uiState.searchQuery
                 }
             )
         }
 
-        // Optional: Handle loading, error, or creation states
-        uiState.isCreating?.let { isCreating ->
-            if (isCreating) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
+        // 3) Loading/error states
+        if (uiState.isCreating) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
-
         uiState.errorMessage?.let { errorMessage ->
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -281,6 +343,78 @@ fun SuggestionCreateItem(
         Text(text = "+ Create '$query'", style = MaterialTheme.typography.bodyMedium)
     }
 }
+
+@Composable
+fun MultiTopicSelectionRow(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    selectedTopics: List<String>,
+    onTopicSelectedOrCreated: (String) -> Unit,
+    onTopicRemove: (String) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // 1) The TopicSearchTextField (weighted 2:1, adjust as you like)
+        Box(
+            modifier = Modifier
+                .weight(2f)
+                .padding(end = 8.dp)
+        ) {
+            TopicSearchTextField(
+                query = query,
+                onQueryChange = onQueryChange
+            )
+        }
+
+        // 2) The box to show selected topics
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(4.dp)
+        ) {
+            // A simple row. For more advanced wrapping, use a FlowRow or LazyRow
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                selectedTopics.forEach { topic ->
+                    TopicChip(
+                        text = topic,
+                        onRemoveClick = { onTopicRemove(topic) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TopicChip(
+    text: String,
+    onRemoveClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = text)
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Remove Topic",
+                modifier = Modifier
+                    .size(16.dp)
+                    .clickable { onRemoveClick() }
+            )
+        }
+    }
+}
+
 
 
 

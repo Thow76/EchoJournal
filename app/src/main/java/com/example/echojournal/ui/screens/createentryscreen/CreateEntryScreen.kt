@@ -298,11 +298,13 @@ fun CreateEntryScreen(
                     }
                 }
                 // Topic search + creation UI (for example)
-                TopicSearchAndCreate(viewModel = topicViewModel,
-                    onTopicPicked = { newTopic ->
-                        // Add the new topic to the set
-                        selectedTopics = selectedTopics + newTopic
-                    })
+                TopicSearchAndCreate(
+                    viewModel = topicViewModel,
+                    selectedTopics = selectedTopics.toList(),
+                    onSelectedTopicsChange = { updatedList ->
+                        selectedTopics = updatedList.toSet()
+                    }
+                )
                 // Description field
                 CustomTextField(
                     value = addDescriptionTextFieldValue,
