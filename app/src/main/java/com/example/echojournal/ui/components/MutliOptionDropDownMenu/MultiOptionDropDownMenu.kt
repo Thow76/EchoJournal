@@ -104,6 +104,31 @@ fun MultiSelectDropdownMenu(
         )
 
         // Dropdown menu
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false },
+//            modifier = Modifier
+//                .width(dropdownWidth)
+//                .background(MaterialTheme.colorScheme.surface)
+//        ) {
+//            options.forEach { option ->
+//                val isSelected = option in selectedCategory
+//                MultiSelectDropdownMenuItem(
+//                    option = option,
+//                    isSelected = isSelected,
+//                    onOptionSelected = { chosen ->
+//                        onOptionSelected(chosen)
+//                        // Close dropdown if all options are selected
+//                        if (selectedOptions.size + 1 == options.size) {
+//                            expanded = false
+//                        }
+//                    },
+//                    onOptionDeselected = { chosen ->
+//                        onOptionDeselected(chosen)
+//                    }
+//                )
+//            }
+//        }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -118,9 +143,16 @@ fun MultiSelectDropdownMenu(
                     isSelected = isSelected,
                     onOptionSelected = { chosen ->
                         onOptionSelected(chosen)
-                        // Close dropdown if all options are selected
-                        if (selectedOptions.size + 1 == options.size) {
+
+                        // 1) You selected a new item, so new total is (selectedOptions.size + 1)
+                        val newSize = selectedOptions.size + 1
+
+                        // 2) If that equals the total number of topics, reset immediately
+                        if (newSize == options.size) {
+                            // same as your old logic:
+                            onClearSelection()
                             expanded = false
+                            toggleAfterReset = true
                         }
                     },
                     onOptionDeselected = { chosen ->
@@ -129,6 +161,7 @@ fun MultiSelectDropdownMenu(
                 )
             }
         }
+
     }
 }
 

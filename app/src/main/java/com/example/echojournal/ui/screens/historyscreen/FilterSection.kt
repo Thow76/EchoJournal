@@ -46,7 +46,7 @@ fun FilterSection(
 
         MultiSelectDropdownMenu(
             label = "Topics",
-            options = storedTopics.sortedBy { it.first() },
+            options = storedTopics.sortedBy { it.firstOrNull()?: ' ' },
             selectedOptions = selectedTopics,
             onOptionSelected = { chosen -> viewModel.addTopicFilter(chosen) },
             onOptionDeselected = { chosen -> viewModel.removeTopicFilter(chosen) },

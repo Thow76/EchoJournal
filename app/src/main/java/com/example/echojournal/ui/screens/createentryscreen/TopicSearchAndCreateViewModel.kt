@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.data.TopicRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -189,6 +190,11 @@ class TopicViewModel @Inject constructor(
                 showSuggestions = false
             )
         }
+    }
+
+    // Optional: directly expose the repository flow.
+    fun getAllTopics(): Flow<List<String>> {
+        return topicRepository.getAllTopics()
     }
 
     /**
