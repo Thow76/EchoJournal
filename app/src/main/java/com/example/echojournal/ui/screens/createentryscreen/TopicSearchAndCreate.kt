@@ -33,9 +33,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -198,6 +200,17 @@ fun TopicSearchAndCreate(
     onSelectedTopicsChange: (List<String>) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val currentTopicsState = rememberUpdatedState(selectedTopics)
+
+    LaunchedEffect(Unit) {
+        // 2) Collect createTopicEvents once, but always read from currentTopicsState.value
+        viewModel.createTopicEvents.collect { newlyCreatedTopic ->
+            // This merges the newlyCreatedTopic into the *latest* selectedTopics
+            val upToDateList = currentTopicsState.value + newlyCreatedTopic
+            onSelectedTopicsChange(upToDateList)
+        }
+    }
+
 
     Column {
         // 1) Where we track or display the user’s topics

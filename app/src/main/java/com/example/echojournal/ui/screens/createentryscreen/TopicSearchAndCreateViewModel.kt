@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.echojournal.data.TopicRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
@@ -134,6 +136,8 @@ class TopicViewModel @Inject constructor(
     // Initialize the UI state with default values
     private val _uiState = MutableStateFlow(TopicUiState())
     val uiState: StateFlow<TopicUiState> = _uiState.asStateFlow()
+    private val _createTopicEvents = MutableSharedFlow<String>()
+    val createTopicEvents: SharedFlow<String> = _createTopicEvents
 
     init {
         // 1) Collect the repository flow to keep allTopics in sync with persistent storage
@@ -202,43 +206,49 @@ class TopicViewModel @Inject constructor(
      * Checks for duplicates, then stores the topic via the repository.
      * Handles loading and error states appropriately.
      */
+
     fun onCreateTopic() {
         val query = _uiState.value.searchQuery.trim()
+
+        // 1) Basic validation
         if (query.isBlank()) {
             _uiState.update { it.copy(errorMessage = "Topic name cannot be empty.") }
             return
         }
 
-        // Check if the topic already exists (case-insensitive)
-        val currentTopics = _uiState.value.allTopics
-        val exists = currentTopics.any { it.equals(query, ignoreCase = true) }
+        // 2) Check for duplicates in current allTopics (case-insensitive)
+        val exists = _uiState.value.allTopics.any { it.equals(query, ignoreCase = true) }
         if (exists) {
             _uiState.update { it.copy(errorMessage = "Topic already exists.") }
             return
         }
 
+        // 3) Launch a coroutine to create the topic asynchronously
         viewModelScope.launch {
             _uiState.update { it.copy(isCreating = true, errorMessage = null) }
-
             try {
-                // Simulate a network/database operation with a delay (optional)
-                kotlinx.coroutines.delay(1000)
-
-                // Persist the new topic in the repository
+                // Insert the new topic into your repository or database
                 topicRepository.addTopic(query)
 
-                // Update other UI fields after success
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        searchQuery = query,
+                // After successful creation, reset UI state (e.g., clear search field)
+                _uiState.update {
+                    it.copy(
                         isCreating = false,
+                        searchQuery = "",
                         showSuggestions = false
                     )
                 }
+
+                // Emit the newly created topic so the UI can react
+                _createTopicEvents.emit(query)
+
             } catch (e: Exception) {
-                // Handle any errors that occur during creation
+                // If creation fails, report an error in the UI state
                 _uiState.update {
-                    it.copy(isCreating = false, errorMessage = "Failed to create topic.")
+                    it.copy(
+                        isCreating = false,
+                        errorMessage = "Failed to create topic: ${e.message}"
+                    )
                 }
             }
         }

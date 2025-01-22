@@ -76,7 +76,7 @@ fun CreateEntryScreen(
     
     // Topics
     // var selectedTopic by remember { mutableStateOf<String?>(null) }
-    var selectedTopics by remember { mutableStateOf<Set<String>>(emptySet()) }
+    var selectedTopics by remember { mutableStateOf(emptyList<String>()) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -302,7 +302,7 @@ fun CreateEntryScreen(
                     viewModel = topicViewModel,
                     selectedTopics = selectedTopics.toList(),
                     onSelectedTopicsChange = { updatedList ->
-                        selectedTopics = updatedList.toSet()
+                        selectedTopics = updatedList
                     }
                 )
                 // Description field
