@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -498,11 +499,20 @@ fun AudioLogEntry(entry: JournalEntry,
                 }
             }
 
-            Text(
-                text = entry.topic ?: "",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            // Safely handle null or empty lists
+            val topicsList = entry.topics ?: emptyList()
+
+            if (topicsList.isNotEmpty()) {
+                TopicsRow(topics = topicsList)
+            } else {
+                // Fallback if no topics (optional)
+                Text(
+                    text = "No topics",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -537,3 +547,20 @@ fun AudioLogEntry(entry: JournalEntry,
 
 
 
+@Composable
+fun TopicsRow(topics: List<String>) {
+    Row(
+        // Add horizontal spacing, adjust as you wish
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        // Optionally fill the width or wrap content
+        modifier = Modifier.wrapContentWidth()
+    ) {
+        topics.forEach { topic ->
+            Text(
+                text = topic,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}

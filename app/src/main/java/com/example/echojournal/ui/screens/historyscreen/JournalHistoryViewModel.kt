@@ -148,8 +148,14 @@ class JournalHistoryViewModel @Inject constructor(
         val filtered = all.filter { entry ->
             (_selectedMoods.value.isEmpty() || entry.mood in _selectedMoods.value) &&
                     (_selectedTopics.value.isEmpty() ||
-                                    _selectedTopics.value.any { selectedTopic ->
-                                        entry.topic?.contains(selectedTopic, ignoreCase = true) == true})
+                            entry.topics.any { topicInEntry ->
+                                _selectedTopics.value.any { selectedTopic ->
+                                    topicInEntry.equals(selectedTopic, ignoreCase = true)
+                                }
+                            }
+//                                    _selectedTopics.value.any { selectedTopic ->
+//                                        entry.topic?.contains(selectedTopic, ignoreCase = true) == true}
+                            )
         }
         _uiState.value = _uiState.value.copy(journalEntries = filtered)
     }
