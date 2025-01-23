@@ -10,7 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Edit import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -34,6 +34,7 @@ import com.example.echojournal.ui.theme.Gradients
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.AudioPlayerBar
+import com.example.echojournal.ui.components.CustomAlertDialog
 import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.components.CustomTextField
@@ -41,6 +42,7 @@ import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColo
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
 import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
+import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 import com.example.echojournal.ui.theme.MaterialColors
 import com.example.echojournal.ui.theme.Palettes
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -55,11 +57,13 @@ fun CreateEntryScreen(
     journalHistoryViewModel: JournalHistoryViewModel = hiltViewModel(),
     playbackViewModel: PlaybackViewModel = hiltViewModel(),
     topicViewModel: TopicViewModel = hiltViewModel(),
+    recordingViewModel: RecordingViewModel = hiltViewModel(),
     audioFilePath: String? = null
 ) {
     // UI states from ViewModels
     val journalUiState by journalHistoryViewModel.uiState.collectAsState()
     val playbackUiState by playbackViewModel.uiState.collectAsState()
+    val recordingUiState by recordingViewModel.uiState.collectAsState()
 
     // Controls visibility of the MoodBottomSheet
     val showMoodSheet = remember { mutableStateOf(false) }
@@ -106,6 +110,21 @@ fun CreateEntryScreen(
         "UI State: isFileLoaded=${playbackUiState.isFileLoaded}, duration=${playbackUiState.duration}"
     )
 
+    if (recordingUiState.showCancelRecordingDialog) {
+        CustomAlertDialog(
+            modifier = Modifier.width(300.dp),
+            title = "Cancel Recording?",
+            message = "You will lose your recording. If you're fine with that, press 'Leave'.",
+            cancelButtonText = "Cancel",
+            confirmButtonText = "Leave",
+            onCancel = { recordingViewModel.onDismissLeave() },
+            onConfirm = {
+                recordingViewModel.onConfirmLeave()
+                navController.navigateUp()
+            }
+        )
+    }
+
     // Main UI background
     Box(
         modifier = Modifier
@@ -118,7 +137,9 @@ fun CreateEntryScreen(
             topBar = {
                 CustomAppBar(
                     title = "New Entry",
-                    onNavigationClick = { navController.navigateUp() }
+                    onNavigationClick = {
+                            recordingViewModel.onCancelRequest()
+                    }
                 )
             },
             bottomBar = {
@@ -139,8 +160,7 @@ fun CreateEntryScreen(
                                 shape = RoundedCornerShape(50.dp)
                             ),
                         onClick = {
-                            // Cancel action -> use parent callback
-                            // onCancel()
+                            recordingViewModel.onCancelRequest()
                         },
                         text = "Cancel",
                         shape = RoundedCornerShape(50.dp),

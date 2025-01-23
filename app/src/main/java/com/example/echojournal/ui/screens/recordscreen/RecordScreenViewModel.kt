@@ -85,6 +85,30 @@ class RecordingViewModel @Inject constructor(
         }
     }
 
+    fun onCancelRequest() {
+        // When user attempts to navigate away, request showing the dialog
+        _uiState.update { currentState ->
+            currentState.copy(showCancelRecordingDialog = true)
+        }
+    }
+
+    fun onConfirmLeave() {
+        // Dialog “Leave” clicked, hide the dialog and proceed with leaving
+        _uiState.update { currentState ->
+            currentState.copy(showCancelRecordingDialog = false)
+        }
+        cancelRecording()
+        // You might also perform navigation or other logic here
+    }
+
+    fun onDismissLeave() {
+        // Dialog “Cancel” clicked, hide the dialog
+        _uiState.update { currentState ->
+            currentState.copy(showCancelRecordingDialog = false)
+
+        }
+    }
+
     fun cancelRecording() {
         viewModelScope.launch {
             try {
@@ -99,6 +123,25 @@ class RecordingViewModel @Inject constructor(
             }
         }
     }
+
+    fun deleteRecording(filePath: String) {
+        viewModelScope.launch {
+            try {
+                val file = File(filePath)
+                audioRepository.deleteAudioFile(file)
+                _uiState.update {
+                    it.copy(
+                        currentFilePath = if (filePath == it.currentFilePath) null else it.currentFilePath,
+                        errorMessage = null
+                    )
+                }
+                Log.d("RecordingViewModel", "Recording deleted: $filePath")
+            } catch (e: Exception) {
+                handleError("Error deleting recording: ${e.localizedMessage}")
+            }
+        }
+    }
+
     private fun handleError(message: String) {
         Log.e("RecordingViewModel", message)
         _uiState.update { it.copy(errorMessage = message) }

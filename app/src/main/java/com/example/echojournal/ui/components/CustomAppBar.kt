@@ -23,7 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun CustomAppBar(
     title: String,
-    onNavigationClick: () -> Unit
+    onNavigationClick: () -> Unit,
+    icon: @Composable () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
         title = {
