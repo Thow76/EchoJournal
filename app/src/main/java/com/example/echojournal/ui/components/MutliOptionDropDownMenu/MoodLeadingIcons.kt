@@ -8,22 +8,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@Composable
-fun MoodsLeadingIcons(selectedOptions: List<String>) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        selectedOptions.take(2).forEach { option ->
-            getMoodIcon(option)?.let { icon ->
-                Icon(
-                    imageVector = icon,
-                    tint = Color.Unspecified,
-                    contentDescription = null
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun MoodsLeadingIcons(selectedOptions: List<String>) {
+//    Row(
+//        horizontalArrangement = Arrangement.spacedBy(4.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        selectedOptions.take(2).forEach { option ->
+//            getMoodIcon(option)?.let { icon ->
+//                Icon(
+//                    imageVector = icon,
+//                    tint = Color.Unspecified,
+//                    contentDescription = null
+//                )
+//            }
+//        }
+//    }
+//}
 
 

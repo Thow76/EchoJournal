@@ -52,3 +52,24 @@ fun getMoodColors(mood: String?): Triple<Color, Color, Color> {
         )
     }
 }
+
+@Composable
+fun getIcon(label: String, option: String): ImageVector? {
+    return when (label) {
+        "Moods" -> {
+            // Return the appropriate mood icon based on the option
+            when (option) {
+                "Stressed" -> ImageVector.vectorResource(R.drawable.stressed_mood)
+                "Sad"      -> ImageVector.vectorResource(R.drawable.sad_mood)
+                "Neutral"  -> ImageVector.vectorResource(R.drawable.neutral_mood)
+                "Peaceful" -> ImageVector.vectorResource(R.drawable.peaceful_mood)
+                "Excited"  -> ImageVector.vectorResource(R.drawable.excited_mood)
+                else -> null // No icon for unrecognized mood options
+            }
+        }
+        "Topics" -> null // No icon for topics
+        else -> null // No icon for other labels
+    }
+}
+
+

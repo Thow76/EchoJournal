@@ -3,12 +3,15 @@ package com.example.echojournal.ui.components.MutliOptionDropDownMenu
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,45 +93,49 @@ fun MultiSelectDropdownMenu(
                 width = 1.dp,
                 color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
             ),
+//            leadingIcon = {
+//                if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
+//                    when (label) {
+//                        "Moods" -> {
+//                            MoodsLeadingIcons(selectedOptions = selectedOptions.toList())
+//                        }
+//                        "Topics" -> {
+//                            TopicsLeadingIcons(selectedOptions = selectedOptions.toList())
+//                        }
+//                        else -> {
+//                            // Optionally do nothing or provide a default icon
+//                        }
+//                    }
+//                }
+//                          },
             leadingIcon = {
-                // Only show mood icons if not all options are selected
-                if (label == "Moods" && selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
-                    MoodsLeadingIcons(selectedOptions = selectedOptions.toList())
+                if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
+                    Row {
+                        selectedOptions.take(2).forEach { item ->
+                            // Determine icon based on label + option
+                            val icon = getIcon(label, item)
+                            // If there's an icon, draw it
+                            icon?.let {
+                                Icon(
+                                    imageVector = it,
+                                    contentDescription = null,
+                                    tint = Color.Unspecified
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                        }
+                    }
                 }
-            },
-            trailingIcon = {
+                          },
+
+
+                    trailingIcon = {
                 // Only show the close icon if not all options are selected
                 if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
                     ClearSelectionIconButton(onClearSelection = onClearSelection)
                 }}
         )
 
-        // Dropdown menu
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            modifier = Modifier
-//                .width(dropdownWidth)
-//                .background(MaterialTheme.colorScheme.surface)
-//        ) {
-//            options.forEach { option ->
-//                val isSelected = option in selectedCategory
-//                MultiSelectDropdownMenuItem(
-//                    option = option,
-//                    isSelected = isSelected,
-//                    onOptionSelected = { chosen ->
-//                        onOptionSelected(chosen)
-//                        // Close dropdown if all options are selected
-//                        if (selectedOptions.size + 1 == options.size) {
-//                            expanded = false
-//                        }
-//                    },
-//                    onOptionDeselected = { chosen ->
-//                        onOptionDeselected(chosen)
-//                    }
-//                )
-//            }
-//        }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -157,11 +164,11 @@ fun MultiSelectDropdownMenu(
                     },
                     onOptionDeselected = { chosen ->
                         onOptionDeselected(chosen)
-                    }
+                    },
+                    label = label
                 )
             }
         }
-
     }
 }
 
