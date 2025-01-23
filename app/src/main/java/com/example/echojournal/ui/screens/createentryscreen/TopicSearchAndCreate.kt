@@ -269,7 +269,7 @@ fun TopicSearchTextField(
             Icon(
                 imageVector = Icons.Default.Tag,
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
+                modifier = Modifier.size(16.dp),
                 tint = MaterialColors.OutlineVariantNeutralVariant80
             )
         },
@@ -284,7 +284,7 @@ fun TopicSearchTextField(
             focusedTextColor = MaterialTheme.colorScheme.onSurface
         ),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().padding(8.dp)
     )
 }
 
@@ -371,7 +371,7 @@ fun MultiTopicSelectionRow(
         // 1) The TopicSearchTextField (weighted 2:1, adjust as you like)
         Box(
             modifier = Modifier
-                .weight(2f)
+                .weight(1f)
                 .padding(end = 8.dp)
         ) {
             TopicSearchTextField(
@@ -381,23 +381,23 @@ fun MultiTopicSelectionRow(
         }
 
         // 2) The box to show selected topics
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(4.dp)
-        ) {
-            // A simple row. For more advanced wrapping, use a FlowRow or LazyRow
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                selectedTopics.forEach { topic ->
-                    TopicChip(
-                        text = topic,
-                        onRemoveClick = { onTopicRemove(topic) }
-                    )
-                }
-            }
-        }
+//        Box(
+//            modifier = Modifier
+//                .weight(1f)
+//                .padding(top = 16.dp)
+//        ) {
+//            // A simple row. For more advanced wrapping, use a FlowRow or LazyRow
+//            Row(
+//                horizontalArrangement = Arrangement.spacedBy(4.dp)
+//            ) {
+//                selectedTopics.forEach { topic ->
+//                    TopicChip(
+//                        text = topic,
+//                        onRemoveClick = { onTopicRemove(topic) }
+//                    )
+//                }
+//            }
+//        }
     }
 }
 
@@ -410,7 +410,7 @@ fun TopicChip(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
