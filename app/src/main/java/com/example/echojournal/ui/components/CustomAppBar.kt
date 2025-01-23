@@ -23,25 +23,27 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun CustomAppBar(
     title: String,
-    onNavigationClick: () -> Unit,
-    icon: @Composable () -> Unit = {},
+    onNavigationClick: (() -> Unit)? = null, // Make this nullable
+    icon: @Composable (() -> Unit)? = null // Optional icon parameter
 ) {
     CenterAlignedTopAppBar(
         title = {
-                Text(
-                    text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.headlineLarge,
-                    textAlign = TextAlign.Center,
-                )
+            Text(
+                text = title,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center,
+            )
         },
         navigationIcon = {
-            IconButton(onClick = onNavigationClick) {
-                Icon(
-                    imageVector = Icons.Default.ChevronLeft, // Default back arrow icon
-                    contentDescription = "Back", // Accessibility description
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
+            onNavigationClick?.let {
+                IconButton(onClick = it) {
+                    icon?.invoke() ?: Icon(
+                        imageVector = Icons.Default.ChevronLeft, // Default back arrow icon
+                        contentDescription = "Back", // Accessibility description
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

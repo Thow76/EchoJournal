@@ -35,8 +35,8 @@ fun AudioPlayerBar(
     onSeek: (Float) -> Unit,
     playbarShape: Shape = RoundedCornerShape(50.dp), // Default shape
     iconColor: Color = MaterialTheme.colorScheme.primary, // Default color
-    playbarColor: Color = MaterialTheme.colorScheme.inversePrimary, // Default color
-    sliderColor: Color = MaterialTheme.colorScheme.inverseOnSurface // Default color
+    playbarColor: Color = MaterialTheme.colorScheme.inverseOnSurface, // Default color
+    sliderColor: Color = MaterialTheme.colorScheme.inversePrimary// Default color
 ) {
     Column(
         modifier = Modifier

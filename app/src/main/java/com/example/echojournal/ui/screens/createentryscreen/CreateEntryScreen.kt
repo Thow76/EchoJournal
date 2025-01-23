@@ -300,7 +300,7 @@ fun CreateEntryScreen(
                     )
 
                     // --- Get playbarColor & sliderColor based on selected mood ---
-                    val (playbarColor, sliderColor, iconColor) = getMoodColors(selectedMood)
+                    val (sliderColor, playbarColor, iconColor) = getMoodColors(selectedMood)
 
                     playbackUiState.duration?.let { duration ->
                         key(duration) {

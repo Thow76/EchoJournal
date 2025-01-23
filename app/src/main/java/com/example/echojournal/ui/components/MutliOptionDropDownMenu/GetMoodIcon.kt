@@ -40,14 +40,14 @@ fun getMoodIconOutline(option: String): ImageVector? {
 @Composable
 fun getMoodColors(mood: String?): Triple<Color, Color, Color> {
     return when (mood) {
-        "Neutral" -> Triple(MoodColors.Neutral35, MoodColors.Neutral80, MoodColors.Neutral95)
-        "Stressed" -> Triple(MoodColors.Stressed35, MoodColors.Stressed80, MoodColors.Stressed95)
-        "Sad" -> Triple(MoodColors.Sad35, MoodColors.Sad80, MoodColors.Sad95)
-        "Peaceful" -> Triple(MoodColors.Peaceful35, MoodColors.Peaceful80, MoodColors.Peaceful95)
-        "Excited" -> Triple(MoodColors.Excited35, MoodColors.Excited80, MoodColors.Excited95)
+        "Neutral" -> Triple(MoodColors.Neutral35, MoodColors.Neutral25, MoodColors.Neutral80)
+        "Stressed" -> Triple(MoodColors.Stressed35, MoodColors.Stressed25, MoodColors.Stressed80)
+        "Sad" -> Triple(MoodColors.Sad35, MoodColors.Sad25, MoodColors.Sad80)
+        "Peaceful" -> Triple(MoodColors.Peaceful35, MoodColors.Peaceful25, MoodColors.Peaceful80)
+        "Excited" -> Triple(MoodColors.Excited35, MoodColors.Excited25, MoodColors.Excited80)
         else -> Triple(
-            MaterialTheme.colorScheme.inverseOnSurface,
             MaterialTheme.colorScheme.inversePrimary,
+            MaterialTheme.colorScheme.inverseOnSurface,
             MaterialTheme.colorScheme.primary
         )
     }

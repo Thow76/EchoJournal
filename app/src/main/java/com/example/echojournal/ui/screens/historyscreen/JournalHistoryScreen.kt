@@ -97,9 +97,7 @@ fun JournalHistoryScreen(
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             containerColor = Color.Transparent,
             topBar = {
-                CustomAppBar(title = stringResource(id = R.string.history_screen_heading),
-                    onNavigationClick = {})
-            },
+                CustomAppBar(title = stringResource(id = R.string.history_screen_heading))},
             floatingActionButton = {
                 CustomGradientIconButton(
                     onClick = {

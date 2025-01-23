@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.AudioPlayerBar
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColors
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.createentryscreen.TopicChip
 import com.example.echojournal.ui.theme.MoodColors
@@ -425,15 +426,8 @@ fun AudioLogEntry(entry: JournalEntry,
         }
     }
 
-    // Determine the mood color
-    val entryColour = when (entry.mood) {
-        "Neutral" -> MoodColors.Neutral35
-        "Stressed" -> MoodColors.Stressed35
-        "Sad" -> MoodColors.Sad35
-        "Peaceful" -> MoodColors.Peaceful35
-        "Excited" -> MoodColors.Excited35
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
+    // Use getMoodColors for consistency
+    val (sliderColor, playbarColor, iconColor) = getMoodColors(entry.mood)
 
     // A Card that wraps the journal entry, with animateContentSize for smooth expands/collapses
     Card(
@@ -484,9 +478,9 @@ fun AudioLogEntry(entry: JournalEntry,
                     onPlayPauseClicked = { togglePlayPause() },
                     onSeek = { progress -> handleSeek(progress) },
                     playbarShape = RoundedCornerShape(16.dp),
-                    iconColor = MaterialTheme.colorScheme.primary,
-                    playbarColor = entryColour,
-                    sliderColor = MaterialTheme.colorScheme.inverseOnSurface
+                    iconColor = iconColor,
+                    playbarColor = playbarColor,
+                    sliderColor = sliderColor
                 )
             } else {
                 Box(
