@@ -497,19 +497,19 @@ fun AudioLogEntry(entry: JournalEntry,
                 }
             }
 
-            // Safely handle null or empty lists
-            val topicsList = entry.topics ?: emptyList()
-
-            if (topicsList.isNotEmpty()) {
-                TopicsRow(topics = topicsList)
-            } else {
-                // Fallback if no topics (optional)
-                Text(
-                    text = "No topics",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+//            // Safely handle null or empty lists
+//            val topicsList = entry.topics ?: emptyList()
+//
+//            if (topicsList.isNotEmpty()) {
+//                TopicsRow(topics = topicsList)
+//            } else {
+//                // Fallback if no topics (optional)
+//                Text(
+//                    text = "No topics",
+//                    style = MaterialTheme.typography.labelMedium,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//            }
 
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -537,6 +537,21 @@ fun AudioLogEntry(entry: JournalEntry,
                         )
                     }
                 }
+
+            }
+
+            // Safely handle null or empty lists
+            val topicsList = entry.topics ?: emptyList()
+
+            if (topicsList.isNotEmpty()) {
+                TopicsRow(topics = topicsList)
+            } else {
+                // Fallback if no topics (optional)
+                Text(
+                    text = "No topics",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
 
@@ -554,20 +569,24 @@ fun TopicsRow(topics: List<String>) {
         modifier = Modifier.wrapContentWidth().padding(top = 8.dp, start = 8.dp)
     ) {
         topics.forEach { topic ->
-            Row(modifier = Modifier.padding(4.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Tag,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(12.dp)
-                )
-                Text(
-                    text = topic,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            TopicChip(
+                        text = topic,
+                       // onRemoveClick = { onTopicRemove(topic) }
+                    )
+//            Row(modifier = Modifier.padding(4.dp),
+//                verticalAlignment = Alignment.CenterVertically) {
+//                Icon(
+//                    imageVector = Icons.Default.Tag,
+//                    contentDescription = null,
+//                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+//                    modifier = Modifier.size(12.dp)
+//                )
+//                Text(
+//                    text = topic,
+//                    style = MaterialTheme.typography.labelMedium,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//            }
         }
     }
 }

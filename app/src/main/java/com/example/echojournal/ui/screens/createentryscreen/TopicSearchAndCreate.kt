@@ -373,6 +373,7 @@ fun MultiTopicSelectionRow(
             modifier = Modifier
                 .weight(1f)
                 .padding(end = 8.dp)
+
         ) {
             TopicSearchTextField(
                 query = query,
@@ -404,26 +405,26 @@ fun MultiTopicSelectionRow(
 @Composable
 fun TopicChip(
     text: String,
-    onRemoveClick: () -> Unit
+    //onRemoveClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.inverseOnSurface)
             .padding(horizontal = 6.dp, vertical = 2.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = text)
-            Spacer(modifier = Modifier.width(4.dp))
             Icon(
-                imageVector = Icons.Default.Close,
+                imageVector = Icons.Default.Tag,
                 contentDescription = "Remove Topic",
                 modifier = Modifier
-                    .size(16.dp)
-                    .clickable { onRemoveClick() }
-            )
+                    .size(18.dp)
+                )
+            Text(text = text)
+            Spacer(modifier = Modifier.width(4.dp))
+
         }
     }
 }
