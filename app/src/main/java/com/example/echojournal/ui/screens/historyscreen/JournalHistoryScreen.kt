@@ -154,8 +154,7 @@ fun JournalHistoryScreen(
                         }
 
                         uiState.journalEntries.isNotEmpty() -> {
-                            JournalHistoryScreenList(journalEntries = uiState.journalEntries)
-                        }
+                            JournalHistoryScreenList(journalEntries = uiState.journalEntries) }
 
                         else -> {
                             JournalHistoryScreenEmpty(paddingValues)

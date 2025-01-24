@@ -84,12 +84,14 @@ fun AudioLogEntry(entry: JournalEntry,
     val context = LocalContext.current
     val mediaPlayer = remember(entry.audioFilePath) {
         entry.audioFilePath?.let {
-            MediaPlayer().apply {
-                setDataSource(it)
-                prepare()
-                duration.also { dur -> duration = dur.toLong() }
-            }
+            MediaPlayer().apply {    try {
+            setDataSource(it)
+            prepare()
+            duration = this.duration.toLong()
+        } catch (e: Exception) {
+            Log.e("AudioLogEntry", "Error initializing MediaPlayer: ${e.message}")
         }
+        }}
     }
 
     // Update currentPosition periodically when playing
@@ -206,48 +208,7 @@ fun AudioLogEntry(entry: JournalEntry,
                 }
             }
 
-//            // Safely handle null or empty lists
-//            val topicsList = entry.topics ?: emptyList()
-//
-//            if (topicsList.isNotEmpty()) {
-//                TopicsRow(topics = topicsList)
-//            } else {
-//                // Fallback if no topics (optional)
-//                Text(
-//                    text = "No topics",
-//                    style = MaterialTheme.typography.labelMedium,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
-
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Display short or full description depending on isExpanded
-//            Column(
-//                modifier = Modifier
-//                    .animateContentSize()
-//                    .fillMaxWidth()
-//                    .padding(top = 8.dp, start = 16.dp)
-//            ) {
-//                Text(
-//                    text = if (isExpanded) entry.description else shortDescription,
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
-//                // Toggle button (only if there are more than 3 lines)
-//                if (entry.description.length > maxChars) {
-//                    TextButton(
-//                        onClick = { viewModel.toggleExpanded(entry.id) }
-//                    ) {
-//                        Text(
-//                            text = if (isExpanded) "Show Less" else "Show More",
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            color = MaterialTheme.colorScheme.primary
-//                        )
-//                    }
-//                }
-//
-//            }
 
             if (entry.description.isNotEmpty()) {
                 Column(
@@ -330,22 +291,7 @@ fun TopicsRow(topics: List<String>) {
         topics.forEach { topic ->
             TopicChip(
                         text = topic,
-                       // onRemoveClick = { onTopicRemove(topic) }
                     )
-//            Row(modifier = Modifier.padding(4.dp),
-//                verticalAlignment = Alignment.CenterVertically) {
-//                Icon(
-//                    imageVector = Icons.Default.Tag,
-//                    contentDescription = null,
-//                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-//                    modifier = Modifier.size(12.dp)
-//                )
-//                Text(
-//                    text = topic,
-//                    style = MaterialTheme.typography.labelMedium,
-//                    color = MaterialTheme.colorScheme.onSurfaceVariant
-//                )
-//            }
         }
     }
 }
