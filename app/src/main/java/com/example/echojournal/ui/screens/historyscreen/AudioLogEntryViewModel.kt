@@ -53,19 +53,22 @@ class AudioLogEntryViewModel @Inject constructor() : ViewModel() {
         mediaPlayers[entryId] = mediaPlayer
     }
 
-    // Toggle play/pause for a specific entry
     fun togglePlayPause(entryId: Int) {
+        // Stop playback for any currently active entry
+        stopAllPlaybackExcept(entryId)
+
+        // Handle play/pause for the requested entry
         val mediaPlayer = mediaPlayers[entryId] ?: return
         val isPlaying = _uiStateMap.value[entryId]?.isPlaybackActive ?: false
         if (isPlaying) {
             mediaPlayer.pause()
             updateState(entryId) { it.copy(isPlaybackActive = false) }
-            Log.d("PlaybackViewModel", "Playback paused for entryId: $entryId")
+            Log.d("AudioLogEntryViewModel", "Playback paused for entryId: $entryId")
         } else {
             mediaPlayer.start()
             trackPlaybackProgress(entryId)
             updateState(entryId) { it.copy(isPlaybackActive = true) }
-            Log.d("PlaybackViewModel", "Playback started for entryId: $entryId")
+            Log.d("AudioLogEntryViewModel", "Playback started for entryId: $entryId")
         }
     }
 
@@ -92,6 +95,19 @@ class AudioLogEntryViewModel @Inject constructor() : ViewModel() {
                 }
             }
         })
+    }
+
+    // Stop playback for all entries except the specified one
+    private fun stopAllPlaybackExcept(excludedEntryId: Int) {
+        val activeEntries = _uiStateMap.value.filter { it.value.isPlaybackActive && it.key != excludedEntryId }
+        activeEntries.forEach { (entryId, _) ->
+            mediaPlayers[entryId]?.let { player ->
+                player.pause()
+                player.seekTo(0)
+            }
+            updateState(entryId) { it.copy(isPlaybackActive = false, currentPosition = 0L) }
+            Log.d("AudioLogEntryViewModel", "Stopped playback for entryId: $entryId")
+        }
     }
 
     // Release MediaPlayer for a specific entry
