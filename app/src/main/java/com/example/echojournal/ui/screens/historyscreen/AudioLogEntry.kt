@@ -59,98 +59,49 @@ import com.example.echojournal.ui.components.AudioPlayerBar
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColors
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.createentryscreen.TopicChip
+import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
 import com.example.echojournal.ui.theme.MoodColors
+import kotlinx.coroutines.delay
 
 @Composable
-fun AudioLogEntry(entry: JournalEntry,
-                  viewModel: JournalHistoryViewModel = hiltViewModel()) {
+fun AudioLogEntry(
+    entry: JournalEntry,
+    viewModel: JournalHistoryViewModel = hiltViewModel(),
+    playbackViewModel:AudioLogEntryViewModel = hiltViewModel()
+) {
+    // Observe playback state map
+    val uiStateMap by playbackViewModel.uiStateMap.collectAsState()
 
+    // Extract the specific state for this entry
+    val playbackUiState = uiStateMap[entry.id] ?: AudioPlaybackUiState()
+
+    // Expand/collapse state
     val isExpanded = viewModel.isExpanded(entry.id)
 
+    // Shortened description logic
     val maxChars = 130
-
     val shortDescription = if (entry.description.length > maxChars) {
         entry.description.substring(0, maxChars) + "..."
     } else {
         entry.description
     }
 
-    // Audio playback states
-    var isPlaying by remember { mutableStateOf(false) }
-    var currentPosition by remember { mutableStateOf(0L) }
-    var duration by remember { mutableStateOf(0L) }
-
-    // Initialize MediaPlayer
-    val context = LocalContext.current
-    val mediaPlayer = remember(entry.audioFilePath) {
-        entry.audioFilePath?.let {
-            MediaPlayer().apply {    try {
-            setDataSource(it)
-            prepare()
-            duration = this.duration.toLong()
-        } catch (e: Exception) {
-            Log.e("AudioLogEntry", "Error initializing MediaPlayer: ${e.message}")
-        }
-        }}
+    // Load audio file when the file path changes
+    LaunchedEffect(entry.audioFilePath) {
+        entry.audioFilePath?.let { playbackViewModel.loadAudioFile(entry.id, it) }
     }
 
-    // Update currentPosition periodically when playing
-    LaunchedEffect(isPlaying) {
-        while (isPlaying && mediaPlayer != null) {
-            currentPosition = mediaPlayer.currentPosition.toLong()
-            kotlinx.coroutines.delay(1000L)
-            // Stop playback if currentPosition reaches or exceeds duration
-            if (currentPosition >= duration) {
-                isPlaying = false
-                mediaPlayer.seekTo(0)
-                currentPosition = 0
-            }
-        }
-    }
-
-    // Release MediaPlayer when the composable leaves the composition
-    DisposableEffect(mediaPlayer) {
-        onDispose {
-            mediaPlayer?.release()
-        }
-    }
-
-    // Function to handle play/pause toggle
-    fun togglePlayPause() {
-        mediaPlayer?.let {
-            if (isPlaying) {
-                it.pause()
-                isPlaying = false
-            } else {
-                it.start()
-                isPlaying = true
-            }
-        }
-    }
-
-    // Function to handle seeking in the audio
-    fun handleSeek(progress: Float) {
-        mediaPlayer?.let {
-            val newPosition = (progress * duration).toLong()
-            it.seekTo(newPosition.toInt())
-            currentPosition = newPosition
-        }
-    }
-
-    // Use getMoodColors for consistency
+    // UI colors based on mood
     val (sliderColor, playbarColor, iconColor) = getMoodColors(entry.mood)
 
-    // A Card that wraps the journal entry, with animateContentSize for smooth expands/collapses
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .animateContentSize()  // <-- Smooth height transitions
-            .clickable { /* Handle card click if desired (optional) */ },
+            .animateContentSize(),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-
             // Header row with icon, title, and timestamp
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -170,7 +121,6 @@ fun AudioLogEntry(entry: JournalEntry,
                         fontWeight = FontWeight.Bold
                     )
                 }
-
                 Text(
                     text = entry.timeStamp ?: "",
                     style = MaterialTheme.typography.bodySmall,
@@ -181,19 +131,20 @@ fun AudioLogEntry(entry: JournalEntry,
             Spacer(modifier = Modifier.height(8.dp))
 
             // Audio Player Bar (if audio is present)
-            if (entry.audioFilePath != null) {
+            if (entry.audioFilePath != null && playbackUiState.isFileLoaded) {
                 AudioPlayerBar(
-                    isPlaying = isPlaying,
-                    currentPosition = currentPosition,
-                    duration = duration,
-                    onPlayPauseClicked = { togglePlayPause() },
-                    onSeek = { progress -> handleSeek(progress) },
+                    isPlaying = playbackUiState.isPlaybackActive,
+                    currentPosition = playbackUiState.currentPosition,
+                    duration = playbackUiState.duration ?: 0L,
+                    onPlayPauseClicked = { playbackViewModel.togglePlayPause(entry.id) },
+                    onSeek = { progress -> playbackViewModel.seekToPosition(entry.id, progress) },
                     playbarShape = RoundedCornerShape(16.dp),
                     iconColor = iconColor,
                     playbarColor = playbarColor,
                     sliderColor = sliderColor
                 )
             } else {
+                // Fallback for missing or unloaded audio
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -201,7 +152,7 @@ fun AudioLogEntry(entry: JournalEntry,
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "No Audio Available",
+                        text = playbackUiState.errorMessage ?: "No Audio Available",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -210,6 +161,7 @@ fun AudioLogEntry(entry: JournalEntry,
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Expandable description
             if (entry.description.isNotEmpty()) {
                 Column(
                     modifier = Modifier
@@ -219,14 +171,10 @@ fun AudioLogEntry(entry: JournalEntry,
                 ) {
                     val annotatedString = buildAnnotatedString {
                         append(
-                            if (isExpanded) entry.description else entry.description.take(
-                                maxChars
-                            ).trim()
+                            if (isExpanded) entry.description else shortDescription
                         )
                         if (entry.description.length > maxChars) {
                             if (!isExpanded) append("... ")
-
-                            // Add "Show More" or "Show Less" with independent style
                             pushStringAnnotation(tag = "TOGGLE", annotation = "toggle")
                             withStyle(
                                 style = SpanStyle(
@@ -240,33 +188,24 @@ fun AudioLogEntry(entry: JournalEntry,
                         }
                     }
 
-                    // Display text with clickable span
                     ClickableText(
                         text = annotatedString,
                         style = MaterialTheme.typography.bodyMedium,
                         onClick = { offset ->
-                            // Check if the "Show More" or "Show Less" was clicked
-                            annotatedString.getStringAnnotations(
-                                "TOGGLE",
-                                start = offset,
-                                end = offset
-                            )
-                                .firstOrNull()?.let {
-                                    viewModel.toggleExpanded(entry.id)
-                                }
+                            annotatedString.getStringAnnotations("TOGGLE", offset, offset)
+                                .firstOrNull()?.let { viewModel.toggleExpanded(entry.id) }
                         }
                     )
                 }
             }
 
+            Spacer(modifier = Modifier.height(8.dp))
 
-            // Safely handle null or empty lists
+            // Topics Row (if topics exist)
             val topicsList = entry.topics ?: emptyList()
-
             if (topicsList.isNotEmpty()) {
                 TopicsRow(topics = topicsList)
             } else {
-                // Fallback if no topics (optional)
                 Text(
                     text = "No topics",
                     style = MaterialTheme.typography.labelMedium,
@@ -274,11 +213,8 @@ fun AudioLogEntry(entry: JournalEntry,
                 )
             }
         }
-
-        }
     }
-
-
+}
 
 @Composable
 fun TopicsRow(topics: List<String>) {
@@ -290,8 +226,8 @@ fun TopicsRow(topics: List<String>) {
     ) {
         topics.forEach { topic ->
             TopicChip(
-                        text = topic,
-                    )
+                text = topic,
+            )
         }
     }
 }
