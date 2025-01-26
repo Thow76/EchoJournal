@@ -58,12 +58,14 @@ fun CreateEntryScreen(
     playbackViewModel: PlaybackViewModel = hiltViewModel(),
     topicViewModel: TopicViewModel = hiltViewModel(),
     recordingViewModel: RecordingViewModel = hiltViewModel(),
+    createEntryScreenViewModel: CreateEntryScreenViewModel = hiltViewModel(),
     audioFilePath: String? = null
 ) {
     // UI states from ViewModels
     val journalUiState by journalHistoryViewModel.uiState.collectAsState()
     val playbackUiState by playbackViewModel.uiState.collectAsState()
     val recordingUiState by recordingViewModel.uiState.collectAsState()
+    val createEntryScreenUiState by createEntryScreenViewModel.uiState.collectAsState()
 
     // Controls visibility of the MoodBottomSheet
     val showMoodSheet = remember { mutableStateOf(false) }
@@ -75,11 +77,10 @@ fun CreateEntryScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     // Text fields
-    var addTitleTextFieldValue by remember { mutableStateOf("") }
-    var addDescriptionTextFieldValue by remember { mutableStateOf("") }
+    // var addTitleTextFieldValue by remember { mutableStateOf("") }
+    // var addDescriptionTextFieldValue by remember { mutableStateOf("") }
     
     // Topics
-    // var selectedTopic by remember { mutableStateOf<String?>(null) }
     var selectedTopics by remember { mutableStateOf(emptyList<String>()) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -92,7 +93,7 @@ fun CreateEntryScreen(
     val generateEntryId = (0..999999999).random()
 
     val isSaveEnabled by remember {
-        derivedStateOf { selectedMood != null && addTitleTextFieldValue.isNotBlank() }
+        derivedStateOf { selectedMood != null && createEntryScreenUiState.addTitleTextFieldValue.isNotBlank() }
     }
 
 
@@ -143,90 +144,25 @@ fun CreateEntryScreen(
                 )
             },
             bottomBar = {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 54.dp),
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    CustomButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp)
-                            .weight(1f)
-                            .background(
-                                brush = Gradients.BgSaturateGradient,
-                                shape = RoundedCornerShape(50.dp)
-                            ),
-                        onClick = {
-                            recordingViewModel.onCancelRequest()
-                        },
-                        text = "Cancel",
-                        shape = RoundedCornerShape(50.dp),
-                        backgroundColor = Color.Transparent,
-                        textColor = MaterialTheme.colorScheme.primary,
-                        enabled = null
-                    )
 
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    CustomButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 16.dp)
-                            .weight(2f)
-                            .background(
-                                brush = if (isSaveEnabled) {
-                                    Gradients.ButtonGradient
-                                } else {
-                                    Gradients.ButtonRequiredGradient
-                                },
-                                shape = RoundedCornerShape(50.dp)
-                            ),
-                        onClick = {
-                            if (!isSaveEnabled) {
-                                // Optionally show a Toast/Snackbar or just log
-                                Log.w("CreateEntryScreen", "Title and Mood are required!")
-                                return@CustomButton
-                            }
-
-                            // 4) Construct the new JournalEntry
-                            val newEntry = JournalEntry(
-                                id = generateEntryId,
-                                title = addTitleTextFieldValue,
-                                date = date,
-                                timeStamp = timeStamp,
-                                mood = selectedMood!!,
-                                description = addDescriptionTextFieldValue,
-//                                topic = selectedTopic,
-                                selectedTopics.toList(), // store the multiple topics
-                                audioFilePath = audioFilePath
-                                // If you also store audio paths, include that here.
-                            )
-
-                            // 5) Insert into DataStore via ViewModel
-                            journalHistoryViewModel.addJournalEntry(newEntry)
-
-                            // 6) Navigate back or wherever you wish
-                            navController.navigateUp()
-                        },
-                        text = "Save",
-                        enabled = isSaveEnabled,
-                        textColor = if (isSaveEnabled) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.outline
-                        },
-                        shape = RoundedCornerShape(50.dp),
-                        backgroundColor = Color.Transparent,
-                        iconTint = if (isSaveEnabled) {
-                            Color.White
-                        } else {
-                            MaterialTheme.colorScheme.outline
-                        }
-                    )
-                }
+                CreateEntryScreenBottomBar(
+                    isSaveEnabled = isSaveEnabled,
+                    onCancel = { recordingViewModel.onCancelRequest() },
+                    onSave = {
+                        val newEntry = JournalEntry(
+                            id = generateEntryId,
+                            title = createEntryScreenUiState.addTitleTextFieldValue,
+                            date = date,
+                            timeStamp = timeStamp,
+                            mood = selectedMood!!,
+                            description = createEntryScreenUiState.addDescriptionTextFieldValue,
+                            topics = selectedTopics.toList(),
+                            audioFilePath = audioFilePath
+                        )
+                        journalHistoryViewModel.addJournalEntry(newEntry)
+                        navController.navigateUp()
+                    }
+                )
             }
         ) { paddingValues ->
 
@@ -279,8 +215,8 @@ fun CreateEntryScreen(
 
                     // Title field
                     CustomTextField(
-                        value = addTitleTextFieldValue,
-                        onValueChange = { newValue -> addTitleTextFieldValue = newValue },
+                        value = createEntryScreenUiState.addTitleTextFieldValue,
+                        onValueChange = { newValue -> createEntryScreenViewModel.updateTitle(newValue) },
                         placeholderText = "Add Title...",
                         modifier = Modifier.padding(0.dp),
                         textStyle = MaterialTheme.typography.headlineLarge.copy(
@@ -327,8 +263,8 @@ fun CreateEntryScreen(
                 )
                 // Description field
                 CustomTextField(
-                    value = addDescriptionTextFieldValue,
-                    onValueChange = { newValue -> addDescriptionTextFieldValue = newValue },
+                    value = createEntryScreenUiState.addDescriptionTextFieldValue,
+                    onValueChange = { newValue -> createEntryScreenViewModel.updateDescription(newValue)},
                     placeholderText = "Add Description...",
                     modifier = Modifier.padding(start = 8.dp),
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
