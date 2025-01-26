@@ -114,9 +114,7 @@ fun CreateEntryScreen(
                     }
                 )
             },
-            bottomBar = {
-
-                CreateEntryScreenBottomBar(
+            bottomBar = { CreateEntryScreenBottomBar(
                     isSaveEnabled = createEntryScreenUiState.isSaveEnabled,
                     onCancel = { recordingViewModel.onCancelRequest() },
                     onSave = {
@@ -161,9 +159,7 @@ fun CreateEntryScreen(
                         value = createEntryScreenUiState.addTitleTextFieldValue,
                         onValueChange = { createEntryScreenViewModel.updateTitle(it) }
                     )
-
                 }
-
                 // Show audio player if a file is loaded
                 if (playbackUiState.isFileLoaded) {
                     Log.d(
