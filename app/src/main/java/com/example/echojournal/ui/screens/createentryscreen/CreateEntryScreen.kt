@@ -62,26 +62,12 @@ fun CreateEntryScreen(
     audioFilePath: String? = null
 ) {
     // UI states from ViewModels
-    val journalUiState by journalHistoryViewModel.uiState.collectAsState()
     val playbackUiState by playbackViewModel.uiState.collectAsState()
     val recordingUiState by recordingViewModel.uiState.collectAsState()
     val createEntryScreenUiState by createEntryScreenViewModel.uiState.collectAsState()
 
-    // Controls visibility of the MoodBottomSheet
-    val showMoodSheet = remember { mutableStateOf(false) }
-
-    // Holds the mood chosen from the MoodBottomSheet
-    var selectedMood by remember { mutableStateOf<String?>(null) }
-
     // Bottom sheet state
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    // Text fields
-    // var addTitleTextFieldValue by remember { mutableStateOf("") }
-    // var addDescriptionTextFieldValue by remember { mutableStateOf("") }
-    
-    // Topics
-    var selectedTopics by remember { mutableStateOf(emptyList<String>()) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -91,11 +77,6 @@ fun CreateEntryScreen(
     val timeStamp = timeFormat.format(now)
 
     val generateEntryId = (0..999999999).random()
-
-    val isSaveEnabled by remember {
-        derivedStateOf { selectedMood != null && createEntryScreenUiState.addTitleTextFieldValue.isNotBlank() }
-    }
-
 
     // Load audio file if not already loaded
     LaunchedEffect(audioFilePath) {
@@ -146,7 +127,7 @@ fun CreateEntryScreen(
             bottomBar = {
 
                 CreateEntryScreenBottomBar(
-                    isSaveEnabled = isSaveEnabled,
+                    isSaveEnabled = createEntryScreenUiState.isSaveEnabled ,
                     onCancel = { recordingViewModel.onCancelRequest() },
                     onSave = {
                         val newEntry = JournalEntry(
@@ -154,9 +135,9 @@ fun CreateEntryScreen(
                             title = createEntryScreenUiState.addTitleTextFieldValue,
                             date = date,
                             timeStamp = timeStamp,
-                            mood = selectedMood!!,
+                            mood = createEntryScreenUiState.selectedMood!!,
                             description = createEntryScreenUiState.addDescriptionTextFieldValue,
-                            topics = selectedTopics.toList(),
+                            topics = createEntryScreenUiState.selectedTopics.toList(),
                             audioFilePath = audioFilePath
                         )
                         journalHistoryViewModel.addJournalEntry(newEntry)
@@ -180,11 +161,11 @@ fun CreateEntryScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Show either the "Add Mood" button or the selected mood icon
-                    if (selectedMood == null) {
+                    if (createEntryScreenUiState.selectedMood == null) {
                         // No mood selected yet → Show button to pick a mood
                         CustomGradientIconButton(
                             modifier = Modifier.size(32.dp),
-                            onClick = { showMoodSheet.value = true },
+                            onClick = { createEntryScreenViewModel.toggleMoodSheet(show = true) },
                             icon = {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
@@ -203,9 +184,9 @@ fun CreateEntryScreen(
                                 .size(32.dp)
                                 .clickable {
                                     // Optionally let user change their mood
-                                    showMoodSheet.value = true
+                                    createEntryScreenViewModel.toggleMoodSheet(show = true)
                                 },
-                            imageVector = getMoodIcon(selectedMood!!),
+                            imageVector = getMoodIcon(createEntryScreenUiState.selectedMood!!),
                             contentDescription = "Selected Mood",
                             tint = Color.Unspecified
                         )
@@ -236,7 +217,7 @@ fun CreateEntryScreen(
                     )
 
                     // --- Get playbarColor & sliderColor based on selected mood ---
-                    val (sliderColor, playbarColor, iconColor) = getMoodColors(selectedMood)
+                    val (sliderColor, playbarColor, iconColor) = getMoodColors(createEntryScreenUiState.selectedMood)
 
                     playbackUiState.duration?.let { duration ->
                         key(duration) {
@@ -256,9 +237,9 @@ fun CreateEntryScreen(
                 // Topic search + creation UI (for example)
                 TopicSearchAndCreate(
                     viewModel = topicViewModel,
-                    selectedTopics = selectedTopics.toList(),
+                    selectedTopics = createEntryScreenUiState.selectedTopics.toList(),
                     onSelectedTopicsChange = { updatedList ->
-                        selectedTopics = updatedList
+                        createEntryScreenViewModel.selectTopics(updatedList)
                     }
                 )
                 // Description field
@@ -286,9 +267,9 @@ fun CreateEntryScreen(
         }
     }
     // Display the mood bottom sheet if triggered
-    if (showMoodSheet.value) {
+    if (createEntryScreenUiState.showMoodSheet) {
         ModalBottomSheet(
-            onDismissRequest = { showMoodSheet.value = false },
+            onDismissRequest = {  createEntryScreenViewModel.toggleMoodSheet(show = false)  },
             sheetState = sheetState
         ) {
             // Pass callbacks so bottom sheet can confirm/cancel selection
@@ -296,14 +277,12 @@ fun CreateEntryScreen(
                 moodOptions = setOf("Stressed", "Sad", "Neutral", "Peaceful", "Excited"),
                 onConfirm = { chosenMood ->
                     // Update 'selectedMood' in parent
-                    selectedMood = chosenMood
+                    createEntryScreenViewModel.selectMood(chosenMood)
                     // Close the sheet
-                    showMoodSheet.value = false
+                    createEntryScreenViewModel.toggleMoodSheet(show = false)
                 },
                 onCancel = {
-                    // Optional: Clear the mood or keep the old selection
-                    // selectedMood = null
-                    showMoodSheet.value = false
+                    createEntryScreenViewModel.toggleMoodSheet(show = false)
                 }
             )
         }
