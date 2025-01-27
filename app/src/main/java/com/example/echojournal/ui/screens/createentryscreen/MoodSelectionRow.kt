@@ -16,7 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomGradientIconButton
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getIcon
+//import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.Palettes
 
@@ -43,14 +44,16 @@ fun MoodSelectionRow(
                 buttonGradient = Gradients.BgSaturateGradient
             )
         } else {
-            Icon(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickable { onOpenMoodSheet() },
-                imageVector = getMoodIcon(selectedMood),
-                contentDescription = "Selected Mood",
-                tint = Color.Unspecified
-            )
+            getIcon(label = "Moods", option = selectedMood)?.let {
+                Icon(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable { onOpenMoodSheet() },
+                    imageVector = it,
+                    contentDescription = "Selected Mood",
+                    tint = Color.Unspecified
+                )
+            }
         }
     }
 }

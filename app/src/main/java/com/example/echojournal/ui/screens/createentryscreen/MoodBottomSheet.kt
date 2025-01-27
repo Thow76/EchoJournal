@@ -27,7 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomButton
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getIcon
+//import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIconOutline
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.Palettes
@@ -60,7 +61,7 @@ fun MoodBottomSheet(
         ) {
             moodOptions.forEach { mood ->
                 val isSelected = (mood == selectedMood)
-                val icon = if (isSelected) getMoodIcon(mood) else getMoodIconOutline(mood)
+                val icon = if (isSelected) getIcon(label = "Moods", option = mood) else getMoodIconOutline(mood)
 
                 Column(
                     modifier = Modifier

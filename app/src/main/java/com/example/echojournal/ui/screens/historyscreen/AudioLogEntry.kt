@@ -56,8 +56,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.AudioPlayerBar
+import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getIcon
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColors
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
+//import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
 import com.example.echojournal.ui.screens.createentryscreen.TopicChip
 import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
 import com.example.echojournal.ui.theme.MoodColors
@@ -109,11 +110,13 @@ fun AudioLogEntry(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = getMoodIcon(entry.mood),
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
+                    getIcon(label = "Moods", option = entry.mood)?.let {
+                        Icon(
+                            imageVector = it,
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = entry.title,
