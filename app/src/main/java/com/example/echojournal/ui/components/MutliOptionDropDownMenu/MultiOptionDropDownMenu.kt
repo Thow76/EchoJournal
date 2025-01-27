@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -34,52 +35,41 @@ fun MultiSelectDropdownMenu(
     onOptionSelected: (String) -> Unit,
     onOptionDeselected: (String) -> Unit,
     onClearSelection: () -> Unit,
-    dropdownWidth: Dp = 380.dp // Default width for the dropdown
+    dropdownWidth: Dp = 380.dp
 ) {
-    var expanded by rememberSaveable { mutableStateOf(false) }
-    var toggleAfterReset by rememberSaveable { mutableStateOf(false) } // Tracks if dropdown should reopen after a reset
+    // Declare states
+    val expanded = rememberSaveable { mutableStateOf(false) }
+    val toggleAfterReset = rememberSaveable { mutableStateOf(false) }
 
-    val selectedOptionsSorted = selectedOptions.sorted()
-    val selectedCategory = if (label == "Moods") selectedOptions else selectedOptionsSorted
-    val categorySort = if (selectedCategory == selectedOptions) {
-        selectedCategory.joinToString(limit = 2, truncated = "")
-    } else {
-        selectedCategory.joinToString(limit = 2, truncated = " +${selectedOptions.size - 2}")
-    }
+    val isAllSelected = selectedOptions.size == options.size
+    val selectedText = getSelectedText(label, selectedOptions, options)
 
-    // Update selectedText to "All $label" if all options are selected
-    val selectedText = if (selectedOptions.size == options.size) {
-        "All $label"
-    } else {
-        categorySort.ifEmpty { "All $label" }
-    }
-
-    // Handle reopening dropdown after a reset
-    LaunchedEffect(toggleAfterReset) {
-        if (toggleAfterReset) {
-            expanded = true
-            toggleAfterReset = false
+    // Handle reopening dropdown after reset
+    LaunchedEffect(toggleAfterReset.value) {
+        if (toggleAfterReset.value) {
+            expanded.value = true
+            toggleAfterReset.value = false
         }
     }
 
-    Box(
-        modifier = Modifier
-            .padding(2.dp)
-    ) {
-        // Dynamic Chip replaces the button
+    Box(modifier = Modifier.padding(2.dp)) {
         FilterChip(
             colors = FilterChipDefaults.filterChipColors(
-                selectedContainerColor = Color.White
-            ),
-            selected = expanded,
-            onClick = {
-                if (selectedOptions.size == options.size) {
-                    onClearSelection() // Deselect all options if all are selected
-                    expanded = false // Close dropdown
-                    toggleAfterReset = true // Schedule reopening of dropdown
+                containerColor = if (selectedOptions.isEmpty()) {
+                    Color.Transparent
                 } else {
-                    expanded = !expanded // Toggle dropdown normally
+                    Color.White
                 }
+
+            ),
+            selected = expanded.value, // Access value for Boolean
+            onClick = {
+                handleDropdownToggle(
+                    isAllSelected = isAllSelected,
+                    onClearSelection = onClearSelection,
+                    expanded = expanded, // Pass MutableState
+                    toggleAfterReset = toggleAfterReset // Pass MutableState
+                )
             },
             label = {
                 Text(
@@ -91,86 +81,45 @@ fun MultiSelectDropdownMenu(
             shape = RoundedCornerShape(50),
             border = BorderStroke(
                 width = 1.dp,
-                color = if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                color = if (expanded.value || selectedOptions.isNotEmpty()) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.outlineVariant
+                }
             ),
-//            leadingIcon = {
-//                if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
-//                    when (label) {
-//                        "Moods" -> {
-//                            MoodsLeadingIcons(selectedOptions = selectedOptions.toList())
-//                        }
-//                        "Topics" -> {
-//                            TopicsLeadingIcons(selectedOptions = selectedOptions.toList())
-//                        }
-//                        else -> {
-//                            // Optionally do nothing or provide a default icon
-//                        }
-//                    }
-//                }
-//                          },
             leadingIcon = {
                 if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
-                    Row {
-                        selectedOptions.take(2).forEach { item ->
-                            // Determine icon based on label + option
-                            val icon = getIcon(label, item)
-                            // If there's an icon, draw it
-                            icon?.let {
-                                Icon(
-                                    imageVector = it,
-                                    contentDescription = null,
-                                    tint = Color.Unspecified
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                            }
-                        }
-                    }
+                    LeadingIcons(label, selectedOptions)
                 }
-                          },
-
-
-                    trailingIcon = {
-                // Only show the close icon if not all options are selected
+            },
+            trailingIcon = {
                 if (selectedOptions.isNotEmpty() && selectedOptions.size < options.size) {
                     ClearSelectionIconButton(onClearSelection = onClearSelection)
-                }}
+                }
+            }
         )
 
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
+            expanded = expanded.value, // Access value for Boolean
+            onDismissRequest = { expanded.value = false }, // Update value
             modifier = Modifier
                 .width(dropdownWidth)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            options.forEach { option ->
-                val isSelected = option in selectedCategory
-                MultiSelectDropdownMenuItem(
-                    option = option,
-                    isSelected = isSelected,
-                    onOptionSelected = { chosen ->
-                        onOptionSelected(chosen)
-
-                        // 1) You selected a new item, so new total is (selectedOptions.size + 1)
-                        val newSize = selectedOptions.size + 1
-
-                        // 2) If that equals the total number of topics, reset immediately
-                        if (newSize == options.size) {
-                            // same as your old logic:
-                            onClearSelection()
-                            expanded = false
-                            toggleAfterReset = true
-                        }
-                    },
-                    onOptionDeselected = { chosen ->
-                        onOptionDeselected(chosen)
-                    },
-                    label = label
-                )
-            }
+            MultiSelectDropdownMenuItems(
+                options = options,
+                selectedCategory = selectedOptions,
+                onOptionSelected = onOptionSelected,
+                onOptionDeselected = onOptionDeselected,
+                label = label,
+                onClearSelection = onClearSelection,
+                expanded = expanded, // Pass MutableState
+                toggleAfterReset = toggleAfterReset // Pass MutableState
+            )
         }
     }
 }
+
 
 
 

@@ -43,14 +43,6 @@ fun MultiSelectDropdownMenuItem(
                     .background(if (isSelected) Palettes.Secondary95 else Color.Transparent)
                     .padding(8.dp)
             ) {
-                // Leading icon
-//                getMoodIcon(option)?.let { icon ->
-//                    Icon(
-//                        imageVector = icon,
-//                        contentDescription = null,
-//                        tint = Color.Unspecified // Retain original vector color
-//                    )
-//                }
                 val icon = getIcon(label, option)
                 icon?.let {
                     Icon(imageVector = it, contentDescription = null, tint = Color.Unspecified)
@@ -75,60 +67,4 @@ fun MultiSelectDropdownMenuItem(
     )
 }
 
-//@Composable
-//fun MultiSelectDropdownMenuItem(
-//    label: String,                     // NEW
-//    option: String,
-//    isSelected: Boolean,
-//    onOptionSelected: (String) -> Unit,
-//    onOptionDeselected: (String) -> Unit
-//) {
-//    DropdownMenuItem(
-//        onClick = {
-//            if (isSelected) onOptionDeselected(option)
-//            else onOptionSelected(option)
-//        },
-//        text = {
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(if (isSelected) Palettes.Secondary95 else Color.Transparent)
-//                    .padding(8.dp)
-//            ) {
-//                // 1) Choose icon function based on label:
-//                val icon = when (label) {
-//                    "Moods" -> getMoodIcon(option)
-//                    "Topics" -> getTopicIcon()   // or getTopicIcon(option) if needed
-//                    else -> null
-//                }
-//
-//                // 2) Leading icon
-//                icon?.let {
-//                    Icon(
-//                        imageVector = it,
-//                        contentDescription = null,
-//                        tint = Color.Unspecified
-//                    )
-//                    Spacer(modifier = Modifier.width(4.dp))
-//                }
-//
-//                // 3) Item text
-//                Text(
-//                    text = option,
-//                    color = MaterialTheme.colorScheme.onSurface,
-//                    modifier = Modifier.weight(1f)
-//                )
-//
-//                // 4) Checkmark if selected
-//                if (isSelected) {
-//                    Icon(
-//                        imageVector = Icons.Default.Check,
-//                        contentDescription = "Selected",
-//                        tint = MaterialTheme.colorScheme.outline
-//                    )
-//                }
-//            }
-//        }
-//    )
-//}
+
