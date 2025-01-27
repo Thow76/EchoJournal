@@ -32,10 +32,6 @@ class AndroidAudioRecorder @Inject constructor(
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            // Option 1: Directly set the file path
-            // setOutputFile(outputFile.absolutePath)
-
-            // Option 2: Set via FileDescriptor
             setOutputFile(FileOutputStream(outputFile).fd)
 
             try {

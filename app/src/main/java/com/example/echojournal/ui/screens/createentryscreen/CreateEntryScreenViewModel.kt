@@ -1,9 +1,6 @@
 package com.example.echojournal.ui.screens.createentryscreen
 
 import androidx.lifecycle.ViewModel
-import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
-import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
-import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,10 +10,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateEntryScreenViewModel @Inject constructor(
-//    private val journalHistoryViewModel: JournalHistoryViewModel,
-//    private val playbackViewModel: PlaybackViewModel,
-//    private val topicViewModel: TopicViewModel,
-//    private val recordingViewModel: RecordingViewModel
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateEntryScreenUiState())
