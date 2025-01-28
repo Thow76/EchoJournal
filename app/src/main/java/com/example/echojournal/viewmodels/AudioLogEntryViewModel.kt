@@ -1,19 +1,14 @@
-package com.example.echojournal.ui.screens.historyscreen
+package com.example.echojournal.viewmodels
 
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.echojournal.model.JournalEntry
+import com.example.echojournal.domain.model.AudioPlaybackUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 

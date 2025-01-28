@@ -27,9 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomButton
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getIcon
-//import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIconOutline
+import com.example.echojournal.ui.components.utils.getIcon
+import com.example.echojournal.ui.components.utils.getMoodIconOutline
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.Palettes
 

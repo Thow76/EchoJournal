@@ -31,10 +31,12 @@ import androidx.navigation.NavController
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.CustomAlertDialog
 import com.example.echojournal.ui.components.CustomAppBar
-import com.example.echojournal.ui.screens.historyscreen.JournalHistoryViewModel
-import com.example.echojournal.ui.screens.recordscreen.PlaybackViewModel
-import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
+import com.example.echojournal.viewmodels.JournalHistoryViewModel
+import com.example.echojournal.viewmodels.PlaybackViewModel
+import com.example.echojournal.viewmodels.RecordingViewModel
 import com.example.echojournal.ui.theme.Gradients
+import com.example.echojournal.viewmodels.CreateEntryScreenViewModel
+import com.example.echojournal.viewmodels.TopicViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.text.SimpleDateFormat
 import java.util.Date

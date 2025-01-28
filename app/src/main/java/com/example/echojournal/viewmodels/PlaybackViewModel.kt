@@ -1,10 +1,11 @@
-package com.example.echojournal.ui.screens.recordscreen
+package com.example.echojournal.viewmodels
 
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.echojournal.domain.model.PlaybackUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.screens.historyscreen
+package com.example.echojournal.ui.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,11 +13,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.echojournal.ui.components.MutliOptionDropDownMenu.MultiSelectDropdownMenu
-import com.example.echojournal.ui.screens.createentryscreen.TopicViewModel
+import com.example.echojournal.viewmodels.JournalHistoryViewModel
+import com.example.echojournal.viewmodels.TopicViewModel
 
 
 @Composable
-fun FilterSection(
+fun FilterForMoodsAndTopics(
     viewModel: JournalHistoryViewModel = viewModel(),
     topicViewModel: TopicViewModel = hiltViewModel()
 ) {

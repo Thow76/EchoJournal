@@ -1,6 +1,4 @@
-package com.example.echojournal.ui.screens.recordscreen
-
-import java.io.File
+package com.example.echojournal.domain.model
 
 data class RecordingUiState(
     val isRecording: Boolean = false,

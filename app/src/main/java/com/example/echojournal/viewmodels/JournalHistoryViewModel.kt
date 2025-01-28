@@ -1,13 +1,12 @@
-package com.example.echojournal.ui.screens.historyscreen
+package com.example.echojournal.viewmodels
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.data.JournalRepository
+import com.example.echojournal.domain.model.JournalHistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

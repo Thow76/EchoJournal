@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.screens.historyscreen
+package com.example.echojournal.domain.model
 
 import com.example.echojournal.model.JournalEntry
 

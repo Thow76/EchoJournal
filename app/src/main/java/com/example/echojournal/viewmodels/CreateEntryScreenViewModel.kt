@@ -1,6 +1,7 @@
-package com.example.echojournal.ui.screens.createentryscreen
+package com.example.echojournal.viewmodels
 
 import androidx.lifecycle.ViewModel
+import com.example.echojournal.domain.model.CreateEntryScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

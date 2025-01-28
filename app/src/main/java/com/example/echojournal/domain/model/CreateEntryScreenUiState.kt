@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.screens.createentryscreen
+package com.example.echojournal.domain.model
 
 data class CreateEntryScreenUiState(
     val addTitleTextFieldValue: String = "",

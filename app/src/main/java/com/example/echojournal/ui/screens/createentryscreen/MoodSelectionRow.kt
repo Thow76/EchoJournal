@@ -16,8 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomGradientIconButton
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getIcon
-//import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodIcon
+import com.example.echojournal.ui.components.utils.getIcon
 import com.example.echojournal.ui.theme.Gradients
 import com.example.echojournal.ui.theme.Palettes
 

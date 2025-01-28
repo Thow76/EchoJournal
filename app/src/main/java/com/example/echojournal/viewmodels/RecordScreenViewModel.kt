@@ -1,8 +1,7 @@
-package com.example.echojournal.ui.screens.recordscreen
+package com.example.echojournal.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.echojournal.audioplayback.AudioPlayer
 import com.example.echojournal.audiorecorder.AudioRecorder
 import com.example.echojournal.repository.AudioRepository
 import java.io.File
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.util.Log
+import com.example.echojournal.domain.model.RecordingUiState
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel

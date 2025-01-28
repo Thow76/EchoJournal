@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent
+package com.example.echojournal.ui.screens.record
 
 import android.net.Uri
 import android.util.Log
@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.components.CustomGradientIconButton
-import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
+import com.example.echojournal.viewmodels.RecordingViewModel
 import com.example.echojournal.ui.theme.MaterialColors
 import androidx.compose.material.icons.filled.Mic
 import androidx.navigation.NavController

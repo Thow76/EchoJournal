@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.ui.components.utils.getIcon
 import com.example.echojournal.ui.theme.Palettes
 
 @Composable

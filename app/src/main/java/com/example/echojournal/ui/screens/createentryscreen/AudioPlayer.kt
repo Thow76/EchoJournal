@@ -3,9 +3,9 @@ package com.example.echojournal.ui.screens.createentryscreen
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import com.example.echojournal.ui.components.AudioPlayerBar
-import com.example.echojournal.ui.components.MutliOptionDropDownMenu.getMoodColors
-import com.example.echojournal.ui.screens.recordscreen.PlaybackUiState
+import com.example.echojournal.ui.components.audio.AudioPlayerBar
+import com.example.echojournal.domain.model.PlaybackUiState
+import com.example.echojournal.ui.components.utils.getMoodColors
 
 @Composable
 fun AudioPlayer(

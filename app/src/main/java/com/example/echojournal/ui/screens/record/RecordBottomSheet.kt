@@ -1,4 +1,4 @@
-package com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent
+package com.example.echojournal.ui.screens.record
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.echojournal.ui.components.RecordingTimer
-import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
+import com.example.echojournal.ui.components.audio.RecordingTimer
+import com.example.echojournal.viewmodels.RecordingViewModel
 
 @Composable
 fun RecordSheetContent(

@@ -1,6 +1,6 @@
-package com.example.echojournal.ui.screens.historyscreen
+package com.example.echojournal.domain.model
 
-data class AudioPlaybackUiState(
+data class PlaybackUiState(
     val isFileLoaded: Boolean = false,
     val isPlaybackActive: Boolean = false,
     val currentPosition: Long = 0L,

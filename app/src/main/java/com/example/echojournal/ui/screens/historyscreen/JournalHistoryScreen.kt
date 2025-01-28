@@ -4,13 +4,9 @@ import android.Manifest
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,13 +24,15 @@ import androidx.navigation.NavController
 import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
-import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.components.LoadingIndicator
-import com.example.echojournal.ui.screens.recordscreen.recordbottomsheetcontent.RecordSheetContent
-import com.example.echojournal.ui.screens.recordscreen.RecordingViewModel
+import com.example.echojournal.ui.screens.record.RecordSheetContent
+import com.example.echojournal.viewmodels.RecordingViewModel
 import com.example.echojournal.ui.theme.Gradients
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.echojournal.ui.components.StartRecordingFAB
+import com.example.echojournal.ui.components.FilterForMoodsAndTopics
+import com.example.echojournal.viewmodels.JournalHistoryViewModel
 import kotlinx.coroutines.launch
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
@@ -99,31 +97,12 @@ fun JournalHistoryScreen(
             topBar = {
                 CustomAppBar(title = stringResource(id = R.string.history_screen_heading))},
             floatingActionButton = {
-                CustomGradientIconButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            if (recordAudioPermissionState.status != PermissionStatus.Granted) {
-                                // User has initiated a recording request
-                                Log.d("JournalHistoryScreen", "Requesting recording permission.")
-                                isRecordingRequested.value = true
-                                recordAudioPermissionState.launchPermissionRequest()
-                            } else {
-                                // Permission already granted; start recording
-                                Log.d("JournalHistoryScreen", "Permission already granted. Starting recording.")
-                                showRecordSheet.value = true
-                                recordingViewModel.startRecording()
-                            }
-                        }
-                    },
-                    icon = {
-                        Icon(
-                            modifier = Modifier.size(32.dp),
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Record",
-                            tint = Color.White
-                        )
-                    },
-                    contentDescription = "Record a new entry"
+                StartRecordingFAB(
+                    coroutineScope = coroutineScope,
+                    recordAudioPermissionState = recordAudioPermissionState,
+                    isRecordingRequested = isRecordingRequested,
+                    showRecordSheet = showRecordSheet,
+                    recordingViewModel = recordingViewModel
                 )
             }
         ) { paddingValues ->
@@ -132,7 +111,7 @@ fun JournalHistoryScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                FilterSection(
+                FilterForMoodsAndTopics(
                     viewModel = journalHistoryViewModel
                 )
                 Box(
