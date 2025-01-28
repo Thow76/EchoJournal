@@ -1,4 +1,4 @@
-package com.example.echojournal.data
+package com.example.echojournal.data.topics.repository
 
 import androidx.datastore.core.DataStore
 import kotlinx.coroutines.flow.Flow

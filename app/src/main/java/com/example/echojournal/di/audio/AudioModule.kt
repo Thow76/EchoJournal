@@ -1,4 +1,4 @@
-package com.example.echojournal.di
+package com.example.echojournal.di.audio
 
 import com.example.echojournal.audioplayback.AndroidAudioPlayer
 import com.example.echojournal.audioplayback.AudioPlayer
@@ -7,7 +7,7 @@ import com.example.echojournal.audiorecorder.AudioRecorder
 
 import javax.inject.Singleton
 import android.content.Context
-import com.example.echojournal.repository.AudioRepository
+import com.example.echojournal.data.audio.AudioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.model.JournalEntry
-import com.example.echojournal.data.JournalRepository
+import com.example.echojournal.data.journalhistory.repository.JournalRepository
 import com.example.echojournal.domain.model.JournalHistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

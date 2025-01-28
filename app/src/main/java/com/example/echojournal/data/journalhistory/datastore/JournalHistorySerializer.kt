@@ -1,4 +1,4 @@
-package com.example.echojournal.data
+package com.example.echojournal.data.journalhistory.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-object JournalEntrySerializer : Serializer<List<JournalEntry>> {
+object JournalHistorySerializer : Serializer<List<JournalEntry>> {
     override val defaultValue: List<JournalEntry> = emptyList()
 
     override suspend fun readFrom(input: InputStream): List<JournalEntry> {

@@ -1,8 +1,8 @@
-package com.example.echojournal.di
+package com.example.echojournal.di.repository
 
 import androidx.datastore.core.DataStore
-import com.example.echojournal.data.TopicRepository
-import com.example.echojournal.data.TopicRepositoryImpl
+import com.example.echojournal.data.topics.repository.TopicRepository
+import com.example.echojournal.data.topics.repository.TopicRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

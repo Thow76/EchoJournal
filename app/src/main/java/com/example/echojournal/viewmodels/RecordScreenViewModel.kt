@@ -3,7 +3,7 @@ package com.example.echojournal.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.audiorecorder.AudioRecorder
-import com.example.echojournal.repository.AudioRepository
+import com.example.echojournal.data.audio.AudioRepository
 import java.io.File
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

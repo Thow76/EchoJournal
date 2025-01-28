@@ -1,4 +1,4 @@
-package com.example.echojournal.data
+package com.example.echojournal.data.journalhistory.repository
 
 import com.example.echojournal.model.JournalEntry
 import kotlinx.coroutines.flow.Flow

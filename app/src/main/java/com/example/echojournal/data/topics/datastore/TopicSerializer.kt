@@ -1,4 +1,4 @@
-package com.example.echojournal.data
+package com.example.echojournal.data.topics.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

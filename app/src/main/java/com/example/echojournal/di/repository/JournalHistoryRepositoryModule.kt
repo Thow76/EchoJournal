@@ -1,8 +1,8 @@
-package com.example.echojournal.di
+package com.example.echojournal.di.repository
 
-import com.example.echojournal.data.JournalRepository
-import com.example.echojournal.data.JournalRepositoryImpl
-import com.example.echojournal.data.journalEntryDataStore
+import com.example.echojournal.data.journalhistory.repository.JournalRepository
+import com.example.echojournal.data.journalhistory.repository.JournalRepositoryImpl
+import com.example.echojournal.data.journalhistory.datastore.journalEntryDataStore
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -13,11 +13,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object JournalEntryRepositoryModule {
+object JournalHistoryRepositoryModule {
 
     @Provides
     @Singleton
-    fun provideJournalRepository(
+    fun provideJournalHistoryRepository(
         @ApplicationContext context: Context): JournalRepository {
         return JournalRepositoryImpl(context.journalEntryDataStore)
     }

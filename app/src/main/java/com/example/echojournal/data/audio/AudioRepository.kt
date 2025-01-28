@@ -1,4 +1,4 @@
-package com.example.echojournal.repository
+package com.example.echojournal.data.audio
 
 import android.content.Context
 import android.util.Log

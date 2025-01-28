@@ -1,4 +1,4 @@
-package com.example.echojournal.data
+package com.example.echojournal.data.journalhistory.repository
 
 import androidx.datastore.core.DataStore
 import com.example.echojournal.model.JournalEntry
