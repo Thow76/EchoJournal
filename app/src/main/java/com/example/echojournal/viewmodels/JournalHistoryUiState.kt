@@ -1,4 +1,4 @@
-package com.example.echojournal.domain.model
+package com.example.echojournal.viewmodels
 
 import com.example.echojournal.model.JournalEntry
 

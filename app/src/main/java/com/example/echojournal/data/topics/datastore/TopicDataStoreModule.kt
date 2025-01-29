@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object TopicDataStoreModule {
 
-    // Attach a dataStore property to the Context, referencing the TopicSerializer
     private val Context.topicDataStore by dataStore(
         fileName = "topics.json",
         serializer = TopicSerializer

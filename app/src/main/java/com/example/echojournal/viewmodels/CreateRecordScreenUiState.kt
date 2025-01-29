@@ -1,6 +1,6 @@
-package com.example.echojournal.domain.model
+package com.example.echojournal.viewmodels
 
-data class CreateEntryScreenUiState(
+data class CreateRecordScreenUiState(
     val addTitleTextFieldValue: String = "",
     val addDescriptionTextFieldValue: String = "",
     val selectedMood: String? = null,

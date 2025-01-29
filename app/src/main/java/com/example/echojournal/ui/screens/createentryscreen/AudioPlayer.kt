@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import com.example.echojournal.ui.components.audio.AudioPlayerBar
-import com.example.echojournal.domain.model.PlaybackUiState
+import com.example.echojournal.viewmodels.PlaybackUiState
 import com.example.echojournal.ui.components.utils.getMoodColors
 
 @Composable

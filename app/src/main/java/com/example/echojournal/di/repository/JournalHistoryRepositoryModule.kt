@@ -2,7 +2,7 @@ package com.example.echojournal.di.repository
 
 import com.example.echojournal.data.journalhistory.repository.JournalRepository
 import com.example.echojournal.data.journalhistory.repository.JournalRepositoryImpl
-import com.example.echojournal.data.journalhistory.datastore.journalEntryDataStore
+import com.example.echojournal.data.journalhistory.datastore.journalHistoryDataStore
 import android.content.Context
 import dagger.Module
 import dagger.Provides
@@ -19,6 +19,6 @@ object JournalHistoryRepositoryModule {
     @Singleton
     fun provideJournalHistoryRepository(
         @ApplicationContext context: Context): JournalRepository {
-        return JournalRepositoryImpl(context.journalEntryDataStore)
+        return JournalRepositoryImpl(context.journalHistoryDataStore)
     }
 }

@@ -3,7 +3,6 @@ package com.example.echojournal.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.data.topics.repository.TopicRepository
-import com.example.echojournal.domain.model.TopicUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

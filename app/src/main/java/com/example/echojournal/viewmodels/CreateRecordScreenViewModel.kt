@@ -1,7 +1,6 @@
 package com.example.echojournal.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.example.echojournal.domain.model.CreateEntryScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,11 +9,11 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateEntryScreenViewModel @Inject constructor(
+class CreateRecordScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateEntryScreenUiState())
-    val uiState: StateFlow<CreateEntryScreenUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(CreateRecordScreenUiState())
+    val uiState: StateFlow<CreateRecordScreenUiState> = _uiState.asStateFlow()
 
     // Functions to update state
     fun updateTitle(value: String) {

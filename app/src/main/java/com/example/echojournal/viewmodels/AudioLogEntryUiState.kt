@@ -1,6 +1,6 @@
-package com.example.echojournal.domain.model
+package com.example.echojournal.viewmodels
 
-data class PlaybackUiState(
+data class AudioPlaybackUiState(
     val isFileLoaded: Boolean = false,
     val isPlaybackActive: Boolean = false,
     val currentPosition: Long = 0L,

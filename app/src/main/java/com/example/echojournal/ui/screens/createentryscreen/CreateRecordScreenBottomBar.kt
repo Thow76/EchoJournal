@@ -19,7 +19,7 @@ import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.theme.Gradients
 
 @Composable
-fun CreateEntryScreenBottomBar(
+fun CreateRecordScreenBottomBar(
     isSaveEnabled: Boolean,
     onCancel: () -> Unit,
     onSave: () -> Unit

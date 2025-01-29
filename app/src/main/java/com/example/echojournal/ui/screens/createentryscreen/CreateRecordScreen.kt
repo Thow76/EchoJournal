@@ -35,7 +35,7 @@ import com.example.echojournal.viewmodels.JournalHistoryViewModel
 import com.example.echojournal.viewmodels.PlaybackViewModel
 import com.example.echojournal.viewmodels.RecordingViewModel
 import com.example.echojournal.ui.theme.Gradients
-import com.example.echojournal.viewmodels.CreateEntryScreenViewModel
+import com.example.echojournal.viewmodels.CreateRecordScreenViewModel
 import com.example.echojournal.viewmodels.TopicViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.text.SimpleDateFormat
@@ -44,19 +44,19 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-fun CreateEntryScreen(
+fun CreateRecordScreen(
     navController: NavController,
     journalHistoryViewModel: JournalHistoryViewModel = hiltViewModel(),
     playbackViewModel: PlaybackViewModel = hiltViewModel(),
     topicViewModel: TopicViewModel = hiltViewModel(),
     recordingViewModel: RecordingViewModel = hiltViewModel(),
-    createEntryScreenViewModel: CreateEntryScreenViewModel = hiltViewModel(),
+    createRecordScreenViewModel: CreateRecordScreenViewModel = hiltViewModel(),
     audioFilePath: String? = null
 ) {
     // UI states from ViewModels
     val playbackUiState by playbackViewModel.uiState.collectAsState()
     val recordingUiState by recordingViewModel.uiState.collectAsState()
-    val createEntryScreenUiState by createEntryScreenViewModel.uiState.collectAsState()
+    val createEntryScreenUiState by createRecordScreenViewModel.uiState.collectAsState()
 
     // Bottom sheet state
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -116,7 +116,7 @@ fun CreateEntryScreen(
                     }
                 )
             },
-            bottomBar = { CreateEntryScreenBottomBar(
+            bottomBar = { CreateRecordScreenBottomBar(
                     isSaveEnabled = createEntryScreenUiState.isSaveEnabled,
                     onCancel = { recordingViewModel.onCancelRequest() },
                     onSave = {
@@ -152,14 +152,14 @@ fun CreateEntryScreen(
                 ) {
                     MoodSelectionRow(
                         selectedMood = createEntryScreenUiState.selectedMood,
-                        onOpenMoodSheet = { createEntryScreenViewModel.toggleMoodSheet(true) }
+                        onOpenMoodSheet = { createRecordScreenViewModel.toggleMoodSheet(true) }
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     TitleField(
                         value = createEntryScreenUiState.addTitleTextFieldValue,
-                        onValueChange = { createEntryScreenViewModel.updateTitle(it) }
+                        onValueChange = { createRecordScreenViewModel.updateTitle(it) }
                     )
                 }
                 // Show audio player if a file is loaded
@@ -179,13 +179,13 @@ fun CreateEntryScreen(
                         viewModel = topicViewModel,
                         selectedTopics = createEntryScreenUiState.selectedTopics.toList(),
                         onSelectedTopicsChange = { updatedList ->
-                            createEntryScreenViewModel.selectTopics(updatedList)
+                            createRecordScreenViewModel.selectTopics(updatedList)
                         }
                     )
                     // Description field
                     DescriptionField(
                         value = createEntryScreenUiState.addDescriptionTextFieldValue,
-                        onValueChange = { createEntryScreenViewModel.updateDescription(it) }
+                        onValueChange = { createRecordScreenViewModel.updateDescription(it) }
                     )
                 }
             }
@@ -193,7 +193,7 @@ fun CreateEntryScreen(
         // Display the mood bottom sheet if triggered
         if (createEntryScreenUiState.showMoodSheet) {
             ModalBottomSheet(
-                onDismissRequest = { createEntryScreenViewModel.toggleMoodSheet(show = false) },
+                onDismissRequest = { createRecordScreenViewModel.toggleMoodSheet(show = false) },
                 sheetState = sheetState
             ) {
                 // Pass callbacks so bottom sheet can confirm/cancel selection
@@ -201,12 +201,12 @@ fun CreateEntryScreen(
                     moodOptions = setOf("Stressed", "Sad", "Neutral", "Peaceful", "Excited"),
                     onConfirm = { chosenMood ->
                         // Update 'selectedMood' in parent
-                        createEntryScreenViewModel.selectMood(chosenMood)
+                        createRecordScreenViewModel.selectMood(chosenMood)
                         // Close the sheet
-                        createEntryScreenViewModel.toggleMoodSheet(show = false)
+                        createRecordScreenViewModel.toggleMoodSheet(show = false)
                     },
                     onCancel = {
-                        createEntryScreenViewModel.toggleMoodSheet(show = false)
+                        createRecordScreenViewModel.toggleMoodSheet(show = false)
                     }
                 )
             }

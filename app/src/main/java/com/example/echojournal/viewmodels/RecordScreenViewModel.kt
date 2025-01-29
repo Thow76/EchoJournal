@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.util.Log
-import com.example.echojournal.domain.model.RecordingUiState
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
