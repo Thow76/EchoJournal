@@ -100,7 +100,7 @@ fun AudioLogEntry(
                     )
                 }
                 Text(
-                    text = entry.timeStamp ?: "",
+                    text = entry.timeStamp ,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -180,7 +180,7 @@ fun AudioLogEntry(
             Spacer(modifier = Modifier.height(8.dp))
 
             // Topics Row (if topics exist)
-            val topicsList = entry.topics ?: emptyList()
+            val topicsList = entry.topics
             if (topicsList.isNotEmpty()) {
                 TopicsRow(topics = topicsList)
             } else {

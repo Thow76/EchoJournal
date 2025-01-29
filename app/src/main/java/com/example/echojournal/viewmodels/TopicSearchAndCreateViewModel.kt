@@ -72,24 +72,6 @@ class TopicViewModel @Inject constructor(
     }
 
     /**
-     * Handles the selection of a topic.
-     * Sets the search query to the selected topic and hides suggestions.
-     */
-    fun onTopicSelected(selected: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                searchQuery = selected,
-                showSuggestions = false
-            )
-        }
-    }
-
-    // Optional: directly expose the repository flow.
-    fun getAllTopics(): Flow<List<String>> {
-        return topicRepository.getAllTopics()
-    }
-
-    /**
      * Initiates the creation of a new topic based on the current search query.
      * Checks for duplicates, then stores the topic via the repository.
      * Handles loading and error states appropriately.
