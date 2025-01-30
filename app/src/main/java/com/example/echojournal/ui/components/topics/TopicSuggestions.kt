@@ -14,7 +14,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 
 @Composable
 fun TopicSuggestionsDropdown(
@@ -81,6 +83,6 @@ fun TopicSuggestionCreateItem(
             .clickable(onClick = onCreate)
             .padding(12.dp)
     ) {
-        Text(text = "+ Create '$query'", style = MaterialTheme.typography.bodyMedium)
+        Text(text = stringResource(R.string.topic_create, query), style = MaterialTheme.typography.bodyMedium)
     }
 }

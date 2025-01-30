@@ -1,9 +1,12 @@
 package com.example.echojournal.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.echojournal.R
 import com.example.echojournal.data.topics.repository.TopicRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TopicViewModel @Inject constructor(
-    private val topicRepository: TopicRepository
+    private val topicRepository: TopicRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     // Initialize the UI state with default values
@@ -79,21 +83,7 @@ class TopicViewModel @Inject constructor(
 
     fun onCreateTopic() {
         val query = _uiState.value.searchQuery.trim()
-
-        // 1) Basic validation
-        if (query.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Topic name cannot be empty.") }
-            return
-        }
-
-        // 2) Check for duplicates in current allTopics (case-insensitive)
-        val exists = _uiState.value.allTopics.any { it.equals(query, ignoreCase = true) }
-        if (exists) {
-            _uiState.update { it.copy(errorMessage = "Topic already exists.") }
-            return
-        }
-
-        // 3) Launch a coroutine to create the topic asynchronously
+        
         viewModelScope.launch {
             _uiState.update { it.copy(isCreating = true, errorMessage = null) }
             try {
@@ -117,7 +107,10 @@ class TopicViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isCreating = false,
-                        errorMessage = "Failed to create topic: ${e.message}"
+                        errorMessage = context.getString(
+                            R.string.error_message_failed_to_create_topic,
+                            e.message
+                        )
                     )
                 }
             }

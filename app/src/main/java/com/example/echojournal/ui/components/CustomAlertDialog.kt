@@ -6,15 +6,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
+import com.example.echojournal.R
 
 @Composable
 fun CustomAlertDialog(
     modifier: Modifier,
     title: String = "",
     message: String = "",
-    cancelButtonText: String = "Confirm",
-    confirmButtonText: String = "Cancel",
+    cancelButtonText: String = stringResource(R.string.dialog_button_confirm),
+    confirmButtonText: String = stringResource(R.string.dialog_button_cancel),
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
     properties: DialogProperties = DialogProperties(),

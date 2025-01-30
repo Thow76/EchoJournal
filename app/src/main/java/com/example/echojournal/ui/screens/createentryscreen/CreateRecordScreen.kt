@@ -25,9 +25,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.CustomAlertDialog
 import com.example.echojournal.ui.components.CustomAppBar
@@ -87,10 +89,10 @@ fun CreateRecordScreen(
     if (recordingUiState.showCancelRecordingDialog) {
         CustomAlertDialog(
             modifier = Modifier.width(300.dp),
-            title = "Cancel Recording?",
-            message = "You will lose your recording. If you're fine with that, press 'Leave'.",
-            cancelButtonText = "Cancel",
-            confirmButtonText = "Leave",
+            title = stringResource(R.string.confirm_cancel_recording),
+            message = stringResource(R.string.warning_lose_recording),
+            cancelButtonText = stringResource(R.string.button_cancel),
+            confirmButtonText = stringResource(R.string.button_confirm_leave),
             onCancel = { recordingViewModel.onDismissLeave() },
             onConfirm = {
                 recordingViewModel.onConfirmLeave()
@@ -110,7 +112,7 @@ fun CreateRecordScreen(
             containerColor = Color.White,
             topBar = {
                 CustomAppBar(
-                    title = "New Entry",
+                    title = stringResource(R.string.app_bar_title_new_entry),
                     onNavigationClick = {
                         recordingViewModel.onCancelRequest()
                     }

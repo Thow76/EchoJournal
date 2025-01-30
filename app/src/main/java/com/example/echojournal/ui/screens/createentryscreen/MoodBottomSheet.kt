@@ -25,7 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.components.utils.getIcon
 import com.example.echojournal.ui.components.utils.getMoodIconOutline
@@ -48,7 +50,7 @@ fun MoodBottomSheet(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "How are you doing?",
+            text = stringResource(R.string.mood_bottom_sheet_greeting),
             style = MaterialTheme.typography.headlineLarge
         )
         Spacer(modifier = Modifier.height(32.dp))
@@ -108,7 +110,7 @@ fun MoodBottomSheet(
                     // Cancel action -> use parent callback
                     onCancel()
                 },
-                text = "Cancel",
+                text = stringResource(R.string.button_cancel),
                 shape = RoundedCornerShape(50.dp),
                 backgroundColor = Color.Transparent,
                 textColor = MaterialTheme.colorScheme.primary,
@@ -137,7 +139,7 @@ fun MoodBottomSheet(
                         // Possibly show a warning or do nothing
                     }
                 },
-                text = "Confirm",
+                text = stringResource(R.string.button_confirm),
                 textColor = if (selectedMood != null) {
                     MaterialTheme.colorScheme.onPrimary
                 } else {

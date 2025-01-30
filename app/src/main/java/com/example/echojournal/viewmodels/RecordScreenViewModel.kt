@@ -1,5 +1,6 @@
 package com.example.echojournal.viewmodels
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.echojournal.audiorecorder.AudioRecorder
@@ -11,12 +12,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.util.Log
+import com.example.echojournal.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class RecordingViewModel @Inject constructor(
     private val recorder: AudioRecorder,
-    private val audioRepository: AudioRepository
+    private val audioRepository: AudioRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecordingUiState())
@@ -39,7 +43,11 @@ class RecordingViewModel @Inject constructor(
                 }
                 Log.d("RecordingViewModel", "Recording started: ${file.absolutePath}")
             } catch (e: Exception) {
-                handleError("Error starting recording: ${e.localizedMessage}")
+                handleError(
+                    context.getString(
+                        R.string.error_message_error_starting_recording,
+                        e.localizedMessage
+                    ))
             }
         }
     }
@@ -52,7 +60,12 @@ class RecordingViewModel @Inject constructor(
                     _uiState.update { it.copy(isPaused = true) }
                     Log.d("RecordingViewModel", "Recording paused.")
                 } catch (e: Exception) {
-                    handleError("Error pausing recording: ${e.localizedMessage}")
+                    handleError(
+                        context.getString(
+                            R.string.error_message_error_pausing_recording,
+                            e.localizedMessage
+                        )
+                    )
                 }
             }
         }
@@ -66,7 +79,11 @@ class RecordingViewModel @Inject constructor(
                     _uiState.update { it.copy(isPaused = false) }
                     Log.d("RecordingViewModel", "Recording resumed.")
                 } catch (e: Exception) {
-                    handleError("Error resuming recording: ${e.localizedMessage}")
+                    handleError(
+                        context.getString(
+                            R.string.error_message_error_resuming_recording,
+                            e.localizedMessage
+                        ))
                 }
             }
         }
@@ -79,7 +96,11 @@ class RecordingViewModel @Inject constructor(
             Log.d("RecordingViewModel", "Recording stopped at: ${currentOutputFile?.absolutePath}")
             currentOutputFile?.absolutePath
         } catch (e: Exception) {
-            handleError("Error stopping recording: ${e.localizedMessage}")
+            handleError(
+                context.getString(
+                    R.string.error_message_error_stopping_recording,
+                    e.localizedMessage
+                ))
             null
         }
     }
@@ -118,7 +139,11 @@ class RecordingViewModel @Inject constructor(
                 Log.d("RecordingViewModel", "Recording canceled.")
                 currentOutputFile = null
             } catch (e: Exception) {
-                handleError("Error canceling recording: ${e.localizedMessage}")
+                handleError(
+                    context.getString(
+                        R.string.error_message_error_canceling_recording,
+                        e.localizedMessage
+                    ))
             }
         }
     }
@@ -136,7 +161,11 @@ class RecordingViewModel @Inject constructor(
                 }
                 Log.d("RecordingViewModel", "Recording deleted: $filePath")
             } catch (e: Exception) {
-                handleError("Error deleting recording: ${e.localizedMessage}")
+                handleError(
+                    context.getString(
+                        R.string.error_message_error_deleting_recording,
+                        e.localizedMessage
+                    ))
             }
         }
     }

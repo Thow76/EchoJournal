@@ -25,10 +25,11 @@ import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomAppBar
 import com.example.echojournal.ui.components.ErrorSnackbar
 import com.example.echojournal.ui.components.LoadingIndicator
-import com.example.echojournal.ui.screens.record.RecordSheetContent
+import com.example.echojournal.ui.screens.record.RecordBottomSheetContent
 import com.example.echojournal.viewmodels.RecordingViewModel
 import com.example.echojournal.ui.theme.Gradients
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.echojournal.ui.components.StartRecordingFAB
 import com.example.echojournal.ui.components.FilterForMoodsAndTopics
@@ -45,6 +46,8 @@ fun JournalHistoryScreen(
     journalHistoryViewModel: JournalHistoryViewModel = hiltViewModel(),
     recordingViewModel: RecordingViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     val uiState by journalHistoryViewModel.uiState.collectAsState()
 
     // Permission State
@@ -127,7 +130,10 @@ fun JournalHistoryScreen(
                         uiState.errorMessage != null -> {
                             ErrorSnackbar(
                                 modifier = Modifier.align(Alignment.BottomCenter),
-                                errorMessage = "Error: ${uiState.errorMessage}",
+                                errorMessage = stringResource(
+                                    R.string.error_message_error_prefix,
+                                    uiState.errorMessage!!
+                                ),
                                 onDismiss = journalHistoryViewModel::clearErrorMessage
                             )
                         }
@@ -156,7 +162,7 @@ fun JournalHistoryScreen(
             sheetState = sheetState
         ) {
             // Our actual bottom sheet UI for recording
-            RecordSheetContent(
+            RecordBottomSheetContent(
                 recordingViewModel = recordingViewModel,
                 onCloseSheet = {
                     Log.d("JournalHistoryScreen", "Close sheet clicked. Stopping recording.")
@@ -168,7 +174,11 @@ fun JournalHistoryScreen(
                     Log.d("JournalHistoryScreen", "Recording completed. Saved at $filePath")
                     showRecordSheet.value = false
                     coroutineScope.launch {
-                        snackbarHostState.showSnackbar("Recording saved: $filePath")
+                        snackbarHostState.showSnackbar(
+                            context.getString(
+                                R.string.snackbar_recording_saved,
+                                filePath
+                            ))
                     }
                     // Optionally, refresh journal entries or navigate
                     journalHistoryViewModel.journalEntries

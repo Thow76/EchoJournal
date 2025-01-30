@@ -9,8 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomTextField
 import com.example.echojournal.ui.theme.MaterialColors
 
@@ -22,14 +24,14 @@ fun DescriptionField(
     CustomTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholderText = "Add Description...",
+        placeholderText = stringResource(R.string.placeholder_add_description),
         modifier = Modifier.padding(start = 8.dp),
         textStyle = MaterialTheme.typography.bodyLarge.copy(textAlign = TextAlign.Start),
         leadingIcon = {
             Icon(
                 modifier = Modifier.size(18.dp),
                 imageVector = Icons.Default.Edit,
-                contentDescription = "Add Description",
+                contentDescription = stringResource(R.string.content_description_add_description),
                 tint = MaterialColors.OutlineVariantNeutralVariant80
             )
         },

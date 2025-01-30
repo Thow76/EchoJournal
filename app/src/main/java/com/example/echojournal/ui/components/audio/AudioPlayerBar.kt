@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 
 @Composable
 fun AudioPlayerBar(
@@ -37,13 +39,16 @@ fun AudioPlayerBar(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth().padding(start = 16.dp, end = 16.dp)
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp)
             .background(playbarColor, playbarShape) // Apply customizable color and shape
 
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(end = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp)
         ) {
             IconButton(
                 onClick = onPlayPauseClicked,
@@ -54,7 +59,9 @@ fun AudioPlayerBar(
             ) {
                 Icon(
                     imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                    contentDescription = if (isPlaying) "Pause" else "Play",
+                    contentDescription = if (isPlaying) stringResource(R.string.content_description_pause) else stringResource(
+                        R.string.content_description_play
+                    ),
                     )
             }
             Slider(

@@ -15,8 +15,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import com.example.echojournal.R
 import com.example.echojournal.ui.theme.MaterialColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,7 +27,7 @@ fun CustomTextField(
     modifier: Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    placeholderText: String = "Add Title...",
+    placeholderText: String = stringResource(R.string.placeholder_add_title),
     textStyle: TextStyle = MaterialTheme.typography.headlineLarge.copy(
         textAlign = TextAlign.Start
     ),
@@ -47,7 +49,8 @@ fun CustomTextField(
             .focusRequester(focusRequester)
             .clickable {
                 focusRequester.requestFocus()
-                keyboardController?.show()}
+                keyboardController?.show()
+            }
             .fillMaxWidth()
             .background(containerColor),
         textStyle = textStyle,

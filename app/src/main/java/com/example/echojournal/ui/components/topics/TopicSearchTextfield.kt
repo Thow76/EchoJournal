@@ -14,7 +14,9 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.theme.MaterialColors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +37,7 @@ fun TopicSearchTextField(
             )
         },
         placeholder = {
-            Text("Topic", color = MaterialColors.OutlineVariantNeutralVariant80)
+            Text(stringResource(R.string.placeholder_topic), color = MaterialColors.OutlineVariantNeutralVariant80)
         },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = Color.Transparent,
@@ -45,6 +47,7 @@ fun TopicSearchTextField(
             focusedTextColor = MaterialTheme.colorScheme.onSurface
         ),
         modifier = Modifier
-            .fillMaxWidth().padding(8.dp)
+            .fillMaxWidth()
+            .padding(8.dp)
     )
 }

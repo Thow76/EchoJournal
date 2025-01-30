@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.viewmodels.RecordingViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
@@ -46,10 +48,10 @@ fun StartRecordingFAB(
             Icon(
                 modifier = Modifier.size(32.dp),
                 imageVector = Icons.Default.Add,
-                contentDescription = "Record",
+                contentDescription = stringResource(R.string.content_description_record),
                 tint = Color.White
             )
         },
-        contentDescription = "Record a new entry"
+        contentDescription = stringResource(R.string.content_description_record_a_new_entry)
     )
 }

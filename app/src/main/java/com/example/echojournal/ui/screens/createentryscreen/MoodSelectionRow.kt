@@ -9,7 +9,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomGradientIconButton
 import com.example.echojournal.ui.components.utils.getIcon
 import com.example.echojournal.ui.theme.Gradients
@@ -30,7 +32,7 @@ fun MoodSelectionRow(
                     Icon(
                         modifier = Modifier.size(24.dp),
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Choose Mood",
+                        contentDescription = stringResource(R.string.content_description_choose_mood),
                         tint = Palettes.Secondary70
                     )
                 },
@@ -44,7 +46,7 @@ fun MoodSelectionRow(
                         .size(32.dp)
                         .clickable { onOpenMoodSheet() },
                     imageVector = it,
-                    contentDescription = "Selected Mood",
+                    contentDescription = stringResource(R.string.content_description_selected_mood),
                     tint = Color.Unspecified
                 )
             }

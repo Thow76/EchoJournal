@@ -13,8 +13,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.theme.Gradients
 import java.text.SimpleDateFormat
@@ -43,10 +45,10 @@ fun JournalHistoryScreenList(journalEntries: List<JournalEntry>) {
     // Handle grouped entries
     val categorizedEntries = buildList {
         if (todayEntries.isNotEmpty()) {
-            add("Today" to todayEntries)
+            add(stringResource(R.string.journal_history_list_category_title_today) to todayEntries)
         }
         if (yesterdayEntries.isNotEmpty()) {
-            add("Yesterday" to yesterdayEntries)
+            add(stringResource(R.string.journal_history_list_category_title_yesterday) to yesterdayEntries)
         }
         groupedOtherEntries.forEach { (date, entries) ->
             val formattedDate = try {
@@ -83,21 +85,6 @@ fun JournalHistoryScreenList(journalEntries: List<JournalEntry>) {
                 }
                 items(entries, key = { it.id }) { entry ->
                     AudioLogEntry(entry = entry)
-                }
-            }
-
-            // Empty state
-            if (journalEntries.isEmpty()) {
-                item {
-                    Text(
-                        text = "No journal entries available.",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-                    )
                 }
             }
         }

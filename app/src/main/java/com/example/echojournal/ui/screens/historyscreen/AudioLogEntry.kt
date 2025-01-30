@@ -24,12 +24,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.echojournal.R
 import com.example.echojournal.viewmodels.AudioPlaybackUiState
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.ui.components.audio.AudioPlayerBar
@@ -39,12 +42,16 @@ import com.example.echojournal.ui.components.utils.getMoodColors
 import com.example.echojournal.viewmodels.AudioLogEntryViewModel
 import com.example.echojournal.viewmodels.JournalHistoryViewModel
 
+
+
 @Composable
 fun AudioLogEntry(
     entry: JournalEntry,
     viewModel: JournalHistoryViewModel = hiltViewModel(),
     playbackViewModel: AudioLogEntryViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
     // Observe playback state map
     val uiStateMap by playbackViewModel.uiStateMap.collectAsState()
 
@@ -130,7 +137,7 @@ fun AudioLogEntry(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = playbackUiState.errorMessage ?: "No Audio Available",
+                        text = playbackUiState.errorMessage ?: stringResource(R.string.error_message_no_audio_available),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -153,14 +160,20 @@ fun AudioLogEntry(
                         )
                         if (entry.description.length > maxChars) {
                             if (!isExpanded) append("... ")
-                            pushStringAnnotation(tag = "TOGGLE", annotation = "toggle")
+                            pushStringAnnotation(
+                                tag = stringResource(R.string.annotation_tag_toggle),
+                                annotation = stringResource(R.string.annotation_string_toggle)
+                            )
                             withStyle(
                                 style = SpanStyle(
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold
                                 )
                             ) {
-                                append(if (isExpanded) "Show Less" else "Show More")
+                                append(if (isExpanded) stringResource(R.string.description_prompt_show_less) else stringResource(
+                                    R.string.description_prompt_show_more
+                                )
+                                )
                             }
                             pop()
                         }
@@ -170,8 +183,13 @@ fun AudioLogEntry(
                         text = annotatedString,
                         style = MaterialTheme.typography.bodyMedium,
                         onClick = { offset ->
-                            annotatedString.getStringAnnotations("TOGGLE", offset, offset)
-                                .firstOrNull()?.let { viewModel.toggleExpanded(entry.id) }
+                            annotatedString.getStringAnnotations(
+                                tag = context.getString(R.string.annotation_tag_toggle), // Correct way to get the string
+                                start = offset,
+                                end = offset
+                            ).firstOrNull()?.let {
+                                viewModel.toggleExpanded(entry.id)
+                            }
                         }
                     )
                 }
@@ -185,7 +203,7 @@ fun AudioLogEntry(
                 TopicsRow(topics = topicsList)
             } else {
                 Text(
-                    text = "No topics",
+                    text = stringResource(R.string.topics_row_no_topics),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -1,19 +1,25 @@
 package com.example.echojournal.viewmodels
 
+import android.content.Context
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.echojournal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
 import javax.inject.Inject
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 @HiltViewModel
-class PlaybackViewModel @Inject constructor() : ViewModel() {
+class PlaybackViewModel @Inject constructor(
+    @ApplicationContext private val context: Context)
+    :ViewModel(
+) {
 
     private val _uiState = MutableStateFlow(PlaybackUiState())
     val uiState: StateFlow<PlaybackUiState> = _uiState
@@ -22,7 +28,10 @@ class PlaybackViewModel @Inject constructor() : ViewModel() {
 
     fun loadAudioFile(filePath: String) {
         if (!verifyFileExists(filePath)) {
-            _uiState.update { it.copy(isFileLoaded = false, errorMessage = "File not found: $filePath") }
+            _uiState.update { it.copy(isFileLoaded = false, errorMessage = context.getString(
+                R.string.error_message_file_not_found,
+                filePath
+            )) }
             return
         }
         mediaPlayer?.release()

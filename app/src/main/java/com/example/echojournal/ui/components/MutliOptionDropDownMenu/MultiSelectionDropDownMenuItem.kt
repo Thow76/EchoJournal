@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.utils.getIcon
 import com.example.echojournal.ui.theme.Palettes
 
@@ -59,7 +61,7 @@ fun MultiSelectDropdownMenuItem(
                 if (isSelected) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Selected",
+                        contentDescription = stringResource(R.string.content_description_selected),
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }

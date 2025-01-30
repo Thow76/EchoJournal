@@ -20,7 +20,6 @@ fun MultiTopicSelectionRow(
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // 1) The TopicSearchTextField (weighted 2:1, adjust as you like)
         Box(
             modifier = Modifier
                 .weight(1f)

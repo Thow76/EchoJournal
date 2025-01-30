@@ -35,7 +35,7 @@ fun TopicSearchAndCreate(
 
 
     Column {
-        // 1) Where we track or display the user’s topics
+        // 1) Track or display the user’s topics
         MultiTopicSelectionRow(
             query = uiState.searchQuery,
             onQueryChange = viewModel::onSearchTextChange,

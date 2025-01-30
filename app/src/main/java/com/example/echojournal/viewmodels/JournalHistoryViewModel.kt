@@ -1,11 +1,14 @@
 package com.example.echojournal.viewmodels
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.echojournal.R
 import com.example.echojournal.model.JournalEntry
 import com.example.echojournal.data.journalhistory.repository.JournalRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +19,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JournalHistoryViewModel @Inject constructor(
-    private val repository: JournalRepository
+    private val repository: JournalRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
+    
 
     private val _uiState = MutableStateFlow(JournalHistoryUiState())
     val uiState: StateFlow<JournalHistoryUiState> = _uiState
@@ -40,33 +45,14 @@ class JournalHistoryViewModel @Inject constructor(
                 repository.addJournalEntry(entry)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    errorMessage = "Failed to add journal entry: ${e.message}"
+                    errorMessage = context.getString(
+                        R.string.error_message_failed_to_add_journal_entry,
+                        e.message
+                    )
                 )
             }
         }
     }
-
-
-//    fun removeJournalEntry(entryId: Int) {
-//        viewModelScope.launch {
-//            repository.removeJournalEntry(entryId)
-//            expandedStates.value = expandedStates.value.toMutableMap().apply {
-//                remove(entryId)
-//            }
-//        }
-//    }
-//
-//
-//    private fun initializeExpandedStates(entries: List<JournalEntry>) {
-//        _expandedStates.value = _expandedStates.value.toMutableMap().apply {
-//            entries.forEach { entry ->
-//                if (!containsKey(entry.id)) {
-//                    this[entry.id] = false
-//                }
-//            }
-//        }
-//    }
-
 
     fun loadJournalEntries() {
         viewModelScope.launch {
@@ -92,14 +78,14 @@ class JournalHistoryViewModel @Inject constructor(
                 // Handle errors and update UI state
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Failed to load journal entries: ${e.message}"
+                    errorMessage = context.getString(
+                        R.string.error_message_failed_to_load_journal_entries,
+                        e.message
+                    )
                 )
             }
         }
     }
-
-
-
 
     fun isExpanded(id: Int): Boolean {
         return expandedStates[id] ?: false
@@ -151,8 +137,6 @@ class JournalHistoryViewModel @Inject constructor(
                                     topicInEntry.equals(selectedTopic, ignoreCase = true)
                                 }
                             }
-//                                    _selectedTopics.value.any { selectedTopic ->
-//                                        entry.topic?.contains(selectedTopic, ignoreCase = true) == true}
                             )
         }
         _uiState.value = _uiState.value.copy(journalEntries = filtered)

@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.example.echojournal.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +36,7 @@ fun CustomAppBar(
                 IconButton(onClick = it) {
                     icon?.invoke() ?: Icon(
                         imageVector = Icons.Default.ChevronLeft, // Default back arrow icon
-                        contentDescription = "Back", // Accessibility description
+                        contentDescription = stringResource(R.string.content_description_back), // Accessibility description
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }

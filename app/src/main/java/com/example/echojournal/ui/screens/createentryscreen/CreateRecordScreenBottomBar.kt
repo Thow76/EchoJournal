@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.CustomButton
 import com.example.echojournal.ui.theme.Gradients
 
@@ -41,7 +43,7 @@ fun CreateRecordScreenBottomBar(
                     shape = RoundedCornerShape(50.dp)
                 ),
             onClick = onCancel,
-            text = "Cancel",
+            text = stringResource(R.string.button_cancel),
             shape = RoundedCornerShape(50.dp),
             backgroundColor = Color.Transparent,
             textColor = MaterialTheme.colorScheme.primary,
@@ -70,7 +72,7 @@ fun CreateRecordScreenBottomBar(
                 }
                 onSave()
             },
-            text = "Save",
+            text = stringResource(R.string.button_save),
             enabled = isSaveEnabled,
             textColor = if (isSaveEnabled) {
                 MaterialTheme.colorScheme.onPrimary

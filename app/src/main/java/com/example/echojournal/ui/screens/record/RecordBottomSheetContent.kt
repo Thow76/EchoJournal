@@ -12,13 +12,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.echojournal.R
 import com.example.echojournal.ui.components.audio.RecordingTimer
 import com.example.echojournal.viewmodels.RecordingViewModel
 
 @Composable
-fun RecordSheetContent(
+fun RecordBottomSheetContent(
     navController: NavController,
     recordingViewModel: RecordingViewModel,
     onCloseSheet: () -> Unit,
@@ -36,13 +38,13 @@ fun RecordSheetContent(
         when {
             uiState.isPaused -> {
                 Text(
-                    text = "Recording is paused",
+                    text = stringResource(R.string.record_bottom_sheet_recording_is_paused),
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
             uiState.isRecording -> {
                 Text(
-                    text = "Recording your memories...",
+                    text = stringResource(R.string.record_bottom_sheet_recording_your_memories),
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
